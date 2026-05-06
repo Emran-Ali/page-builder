@@ -1,122 +1,122 @@
 <script setup>
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import BaseLucide from '../../../components/base/Lucide.vue'
-import DraggableItem from './DraggableItem.vue'
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import BaseLucide from "../../../components/base/Lucide.vue";
+import DraggableItem from "./DraggableItem.vue";
 
-const store = usePageBuilderStore()
-const canvasRef = ref(null)
-const isDragOver = ref(false)
-const dragOverIndex = ref(-1)
-const draggedComponentIndex = ref(-1)
+const store = usePageBuilderStore();
+const canvasRef = ref(null);
+const isDragOver = ref(false);
+const dragOverIndex = ref(-1);
+const draggedComponentIndex = ref(-1);
 
-const components = computed(() => store.currentPage.components)
+const components = computed(() => store.currentPage.components);
 
-const isAnyGridDragOver = computed(() => store.isAnyGridDragOver)
+const isAnyGridDragOver = computed(() => store.isAnyGridDragOver);
 
 const handleDragOver = (event) => {
   if (isAnyGridDragOver.value) {
-    return
+    return;
   }
-  event.preventDefault()
-  isDragOver.value = true
+  event.preventDefault();
+  isDragOver.value = true;
 
   // Calculate drop index based on mouse position
   if (components.value.length > 0) {
-    const rect = canvasRef.value.getBoundingClientRect()
-    const y = event.clientY - rect.top
+    const rect = canvasRef.value.getBoundingClientRect();
+    const y = event.clientY - rect.top;
 
     // Find the component we're hovering over
-    let newIndex = -1
+    let newIndex = -1;
 
     const componentElements = canvasRef.value.querySelectorAll(
-      '.component-container'
-    )
+      ".component-container",
+    );
 
     for (let i = 0; i < componentElements.length; i++) {
-      const elementRect = componentElements[i].getBoundingClientRect()
-      const elementY = elementRect.top - rect.top
-      const elementHeight = elementRect.height
+      const elementRect = componentElements[i].getBoundingClientRect();
+      const elementY = elementRect.top - rect.top;
+      const elementHeight = elementRect.height;
 
       if (y < elementY + elementHeight / 2) {
-        newIndex = i
-        break
+        newIndex = i;
+        break;
       }
     }
 
     if (newIndex === -1) {
-      newIndex = components.value.length
+      newIndex = components.value.length;
     }
 
-    dragOverIndex.value = newIndex
+    dragOverIndex.value = newIndex;
   } else {
-    dragOverIndex.value = 0
+    dragOverIndex.value = 0;
   }
-}
+};
 
 const handleDragLeave = (event) => {
   if (!canvasRef.value.contains(event.relatedTarget)) {
-    isDragOver.value = false
-    dragOverIndex.value = -1
+    isDragOver.value = false;
+    dragOverIndex.value = -1;
   }
-}
+};
 
 const handleDrop = (event) => {
   if (isAnyGridDragOver.value) {
-    return
+    return;
   }
-  event.preventDefault()
-  isDragOver.value = false
+  event.preventDefault();
+  isDragOver.value = false;
 
-  const componentType = event.dataTransfer.getData('component-type')
-  const draggedComponentId = event.dataTransfer.getData('component-id')
+  const componentType = event.dataTransfer.getData("component-type");
+  const draggedComponentId = event.dataTransfer.getData("component-id");
 
   if (componentType) {
     // Adding new component from sidebar
     const insertIndex =
-      dragOverIndex.value >= 0 ? dragOverIndex.value : components.value.length
-    store.addComponent(componentType, null, insertIndex)
+      dragOverIndex.value >= 0 ? dragOverIndex.value : components.value.length;
+    store.addComponent(componentType, null, insertIndex);
   } else if (draggedComponentId) {
     // Reordering existing component
     const currentIndex = components.value.findIndex(
-      (c) => c.id === draggedComponentId
-    )
-    let newIndex = dragOverIndex.value
+      (c) => c.id === draggedComponentId,
+    );
+    let newIndex = dragOverIndex.value;
 
     if (currentIndex !== -1 && newIndex !== -1 && currentIndex !== newIndex) {
       // Adjust index if moving down
       if (newIndex > currentIndex) {
-        newIndex--
+        newIndex--;
       }
-      store.moveComponent(draggedComponentId, newIndex)
+      store.moveComponent(draggedComponentId, newIndex);
     }
   }
 
-  dragOverIndex.value = -1
-  draggedComponentIndex.value = -1
-}
+  dragOverIndex.value = -1;
+  draggedComponentIndex.value = -1;
+};
 
 const handleCanvasClick = (event) => {
   if (event.target === canvasRef.value) {
-    store.selectComponent(null)
+    store.selectComponent(null);
   }
-}
+};
 
 const handleComponentDragStart = (componentId) => {
   draggedComponentIndex.value = components.value.findIndex(
-    (c) => c.id === componentId
-  )
-}
+    (c) => c.id === componentId,
+  );
+};
 
 watch(
   () => store.isAnyGridDragOver,
   (newValue) => {
     if (newValue) {
       // A grid is handling the drag, reset canvas state
-      isDragOver.value = false
-      dragOverIndex.value = -1
+      isDragOver.value = false;
+      dragOverIndex.value = -1;
     }
-  }
-)
+  },
+);
 </script>
 
 <template>

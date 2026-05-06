@@ -1,115 +1,115 @@
 <script setup>
-import Button from 'primevue/button'
-import Dropdown from 'primevue/dropdown'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
-import { ref, watch } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import TeacherSelectionDialog from './TeacherSelectionDialog.vue'
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import {ref, watch} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import TeacherSelectionDialog from "./TeacherSelectionDialog.vue";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const localProps = ref({})
-const showTeacherDialog = ref(false)
+const store = usePageBuilderStore();
+const localProps = ref({});
+const showTeacherDialog = ref(false);
 
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'teacherlist') {
-      localProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "teacherlist") {
+      localProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 const updateProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, localProps.value)
+    store.updateComponentProps(props.component.id, localProps.value);
   }
-}
+};
 
 const updateProp = (key, value) => {
-  localProps.value[key] = value
-  updateProps()
-}
+  localProps.value[key] = value;
+  updateProps();
+};
 
 const headingOptions = [
-  { label: 'Heading 1', value: 'h1' },
-  { label: 'Heading 2', value: 'h2' },
-  { label: 'Heading 3', value: 'h3' },
-]
+  {label: "Heading 1", value: "h1"},
+  {label: "Heading 2", value: "h2"},
+  {label: "Heading 3", value: "h3"},
+];
 
 const severityOptions = [
-  { label: 'Primary', value: 'primary' },
-  { label: 'Secondary', value: 'secondary' },
+  {label: "Primary", value: "primary"},
+  {label: "Secondary", value: "secondary"},
   // { label: 'Success', value: 'success' },
   // { label: 'Info', value: 'info' },
   // { label: 'Warning', value: 'warning' },
   // { label: 'Help', value: 'help' },
   // { label: 'Danger', value: 'danger' },
-]
+];
 
 const variantOptions = [
-  { label: 'Filled', value: 'filled' },
-  { label: 'Outlined', value: 'outlined' },
-  { label: 'Text', value: 'text' },
-]
+  {label: "Filled", value: "filled"},
+  {label: "Outlined", value: "outlined"},
+  {label: "Text", value: "text"},
+];
 
 const viewModeOptions = [
-  { label: 'Grid View', value: 'grid' },
-  { label: 'List View', value: 'list' },
-]
+  {label: "Grid View", value: "grid"},
+  {label: "List View", value: "list"},
+];
 
 const itemsPerPageOptions = [
-  { label: '4', value: 4 },
-  { label: '8', value: 8 },
-  { label: '12', value: 12 },
-  { label: '16', value: 16 },
-  { label: '20', value: 20 },
-  { label: '24', value: 24 },
-]
+  {label: "4", value: 4},
+  {label: "8", value: 8},
+  {label: "12", value: 12},
+  {label: "16", value: 16},
+  {label: "20", value: 20},
+  {label: "24", value: 24},
+];
 
 const removeTeacher = (index) => {
   if (localProps.value.teachers && localProps.value.teachers[index]) {
-    localProps.value.teachers.splice(index, 1)
-    updateProps()
+    localProps.value.teachers.splice(index, 1);
+    updateProps();
   }
-}
+};
 
 const addButton = () => {
-  if (!localProps.value.buttons) localProps.value.buttons = []
+  if (!localProps.value.buttons) localProps.value.buttons = [];
   localProps.value.buttons.push({
-    label: 'New Button',
-    link: '#',
-    severity: 'primary',
-    variant: 'filled',
-  })
-  updateProps()
-}
+    label: "New Button",
+    link: "#",
+    severity: "primary",
+    variant: "filled",
+  });
+  updateProps();
+};
 
 const removeButton = (index) => {
   if (localProps.value.buttons && localProps.value.buttons[index]) {
-    localProps.value.buttons.splice(index, 1)
-    updateProps()
+    localProps.value.buttons.splice(index, 1);
+    updateProps();
   }
-}
+};
 
 const updateButton = (index, key, value) => {
   if (localProps.value.buttons && localProps.value.buttons[index]) {
-    localProps.value.buttons[index][key] = value
-    updateProps()
+    localProps.value.buttons[index][key] = value;
+    updateProps();
   }
-}
+};
 
 const openTeacherDialog = () => {
-  showTeacherDialog.value = true
-}
+  showTeacherDialog.value = true;
+};
 
 // Map API teacher data to store format
 const mapApiTeacherToStoreFormat = (apiTeacher) => {
@@ -118,49 +118,49 @@ const mapApiTeacherToStoreFormat = (apiTeacher) => {
     apiTeacher.teacherDisciplines
       ?.slice(0, 3)
       ?.map((d) => d.name)
-      ?.join(', ') || ''
+      ?.join(", ") || "";
 
   // Get first language
-  const language = apiTeacher.teacherLanguages?.[0]?.language || 'English'
+  const language = apiTeacher.teacherLanguages?.[0]?.language || "English";
 
   // Create fallback image text from first name
-  const imageText = apiTeacher.firstName?.charAt(0)?.toUpperCase() || 'T'
+  const imageText = apiTeacher.firstName?.charAt(0)?.toUpperCase() || "T";
 
   return {
     id: apiTeacher.id,
     slug: apiTeacher.slug,
-    image: apiTeacher.avatarUrl || '',
-    name: `${apiTeacher.firstName || ''} ${apiTeacher.lastName ? apiTeacher.lastName.charAt(0).toUpperCase() + '.' : ''}`.trim(),
+    image: apiTeacher.avatarUrl || "",
+    name: `${apiTeacher.firstName || ""} ${apiTeacher.lastName ? apiTeacher.lastName.charAt(0).toUpperCase() + "." : ""}`.trim(),
     discipline: disciplines,
     // rating: apiTeacher.rating?.toString() || '0',
     // ratingCount: apiTeacher.ratingCount?.toString() || '0',
     // students: apiTeacher.totalStudents?.toString() || '0',
-    price: apiTeacher.pricePerLesson || '0',
-    profileSummary: apiTeacher.profileSummary || '',
+    price: apiTeacher.pricePerLesson || "0",
+    profileSummary: apiTeacher.profileSummary || "",
     language: language,
     imageText: imageText,
-  }
-}
+  };
+};
 
 const handleTeacherSelection = (selectedTeachers) => {
   // Map API data to store format
-  const mappedTeachers = selectedTeachers.map(mapApiTeacherToStoreFormat)
+  const mappedTeachers = selectedTeachers.map(mapApiTeacherToStoreFormat);
 
   // Update local props with mapped teachers
-  localProps.value.teachers = mappedTeachers
+  localProps.value.teachers = mappedTeachers;
 
-  updateProps()
+  updateProps();
 
   // Close dialog
-  showTeacherDialog.value = false
+  showTeacherDialog.value = false;
 
-  console.log('Teachers selected and mapped:', mappedTeachers)
-}
+  console.log("Teachers selected and mapped:", mappedTeachers);
+};
 
 const handleDialogCancel = () => {
-  showTeacherDialog.value = false
-  console.log('Dialog cancelled')
-}
+  showTeacherDialog.value = false;
+  console.log("Dialog cancelled");
+};
 </script>
 
 <template>
@@ -284,7 +284,7 @@ const handleDialogCancel = () => {
                 v-else
                 class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-semibold"
               >
-                {{ teacher.imageText || teacher.name?.charAt(0) || 'T' }}
+                {{ teacher.imageText || teacher.name?.charAt(0) || "T" }}
               </div>
               <div>
                 <h5 class="font-medium text-gray-700">{{ teacher.name }}</h5>

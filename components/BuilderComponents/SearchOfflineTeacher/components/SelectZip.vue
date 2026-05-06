@@ -1,99 +1,99 @@
 <script setup lang="ts">
-import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import { regions } from 'public/regions'
-import { nextTick, onUnmounted, ref, watch } from 'vue'
-import { usePageBuilderStore } from '~/layers/page-builder/stores/pageBuilder'
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import {regions} from "public/regions";
+import {nextTick, onUnmounted, ref, watch} from "vue";
+import {usePageBuilderStore} from "@layers/page-builder/stores/pageBuilder";
 
 const props = defineProps({
   initialArea: {
     type: String,
-    default: 'California',
+    default: "California",
   },
-})
+});
 
-const selectedArea = ref(props.initialArea)
+const selectedArea = ref(props.initialArea);
 
 watch(
   () => props.initialArea,
   (newVal) => {
-    selectedArea.value = newVal
+    selectedArea.value = newVal;
     if (newVal) {
-      searchCity()
+      searchCity();
     }
-  }
-)
+  },
+);
 
-const { is } = useGlobalStore()
-const config = useRuntimeConfig()
-const store = usePageBuilderStore()
-const isPreview = computed(() => store.isPreview)
+const {is} = useGlobalStore();
+const config = useRuntimeConfig();
+const store = usePageBuilderStore();
+const isPreview = computed(() => store.isPreview);
 
 const emit = defineEmits<{
-  (e: 'on-search', area: string, zipCodes: string[]): void
-}>()
+  (e: "on-search", area: string, zipCodes: string[]): void;
+}>();
 
-const selectedZips = ref<string[]>([])
-const loading = ref(false)
-const error = ref('')
-const successMessage = ref('')
-const loadingMessage = ref('')
-const showMap = ref(false)
-const mapContainer = ref<HTMLElement | null>(null)
-const totalZipCount = ref(0)
+const selectedZips = ref<string[]>([]);
+const loading = ref(false);
+const error = ref("");
+const successMessage = ref("");
+const loadingMessage = ref("");
+const showMap = ref(false);
+const mapContainer = ref<HTMLElement | null>(null);
+const totalZipCount = ref(0);
 
-let map: mapboxgl.Map | null = null
+let map: mapboxgl.Map | null = null;
 
 onUnmounted(() => {
-  cleanup()
-})
+  cleanup();
+});
 
 function cleanup() {
   try {
     if (map) {
-      map.remove()
-      map = null
+      map.remove();
+      map = null;
     }
   } catch (err) {
-    console.warn('Cleanup error:', err)
+    console.warn("Cleanup error:", err);
   }
 }
 
 async function searchCity() {
   if (!selectedArea.value.trim()) {
-    error.value = 'Please select both Area and Sub-region'
-    return
+    error.value = "Please select both Area and Sub-region";
+    return;
   }
 
-  loading.value = true
-  error.value = ''
-  successMessage.value = ''
-  loadingMessage.value = 'Searching for sub-region locations...'
+  loading.value = true;
+  error.value = "";
+  successMessage.value = "";
+  loadingMessage.value = "Searching for sub-region locations...";
 
   try {
-    cleanup()
+    cleanup();
 
-    selectedZips.value = []
-    showMap.value = false
+    selectedZips.value = [];
+    showMap.value = false;
 
-    emit('on-search', selectedArea.value, [])
+    emit("on-search", selectedArea.value, []);
 
     // Find the selected subRegion
-    const area = regions.find((r) => r.value === selectedArea.value)
+    const area = regions.find((r) => r.value === selectedArea.value);
     // const selectedSubRegionData = area?.cities
 
     if (!area?.bbox) {
-      throw new Error('No boundary data for selected area.')
+      throw new Error("No boundary data for selected area.");
     }
 
-    const [minLon, minLat, maxLon, maxLat] = area.bbox
-    const avgLon = (minLon + maxLon) / 2
-    const avgLat = (minLat + maxLat) / 2
+    const [minLon, minLat, maxLon, maxLat] = area.bbox;
+    const avgLon = (minLon + maxLon) / 2;
+    const avgLat = (minLat + maxLat) / 2;
 
-    loadingMessage.value = 'Initializing map...'
-    showMap.value = true
-    await nextTick()
-    await initializeMap(avgLat, avgLon)
+    loadingMessage.value = "Initializing map...";
+    showMap.value = true;
+    await nextTick();
+    await initializeMap(avgLat, avgLon);
 
     // if (!selectedSubRegionData) {
     //   throw new Error('Selected sub-region not found')
@@ -179,111 +179,111 @@ async function searchCity() {
 
     // Define helper functions after map init (they rely on map)
     function ensureZipSourceAndLayers() {
-      const sourceId = 'zip-codes'
-      if (!map) return
+      const sourceId = "zip-codes";
+      if (!map) return;
       if (!map.getSource(sourceId)) {
         map.addSource(sourceId, {
-          type: 'geojson',
-          data: { type: 'FeatureCollection', features: [] },
-        })
+          type: "geojson",
+          data: {type: "FeatureCollection", features: []},
+        });
       }
 
-      if (!map.getLayer('zip-fill')) {
+      if (!map.getLayer("zip-fill")) {
         map.addLayer({
-          id: 'zip-fill',
-          type: 'fill',
+          id: "zip-fill",
+          type: "fill",
           source: sourceId,
           paint: {
-            'fill-color': [
-              'case',
-              ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
-              '#10B981',
-              '#3B82F6',
+            "fill-color": [
+              "case",
+              ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
+              "#10B981",
+              "#3B82F6",
             ],
-            'fill-opacity': [
-              'case',
-              ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
+            "fill-opacity": [
+              "case",
+              ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
               0.4,
               0.2,
             ],
           },
-        })
+        });
       }
 
-      if (!map.getLayer('zip-border')) {
+      if (!map.getLayer("zip-border")) {
         map.addLayer({
-          id: 'zip-border',
-          type: 'line',
+          id: "zip-border",
+          type: "line",
           source: sourceId,
           paint: {
-            'line-color': [
-              'case',
-              ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
-              '#10B981',
-              '#3B82F6',
+            "line-color": [
+              "case",
+              ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
+              "#10B981",
+              "#3B82F6",
             ],
-            'line-width': 2,
+            "line-width": 2,
           },
-        })
+        });
       }
 
-      if (!map.getLayer('zip-labels')) {
+      if (!map.getLayer("zip-labels")) {
         map.addLayer({
-          id: 'zip-labels',
-          type: 'symbol',
+          id: "zip-labels",
+          type: "symbol",
           source: sourceId,
           layout: {
-            'text-field': ['coalesce', ['get', 'ZCTA5'], ['get', 'GEOID'], ''],
-            'text-anchor': 'center',
-            'text-size': 12,
-            'text-allow-overlap': false,
-            'text-ignore-placement': false,
+            "text-field": ["coalesce", ["get", "ZCTA5"], ["get", "GEOID"], ""],
+            "text-anchor": "center",
+            "text-size": 12,
+            "text-allow-overlap": false,
+            "text-ignore-placement": false,
           },
           paint: {
-            'text-color': '#1F2937',
-            'text-halo-color': '#ffffff',
-            'text-halo-width': 2,
+            "text-color": "#1F2937",
+            "text-halo-color": "#ffffff",
+            "text-halo-width": 2,
           },
-        })
+        });
       }
     }
 
-    const allZipGeoJSON: GeoJSON.Feature[] = []
-    const seenZips = new Set<string>()
-    let incrementalBounds: mapboxgl.LngLatBounds | null = null
+    const allZipGeoJSON: GeoJSON.Feature[] = [];
+    const seenZips = new Set<string>();
+    let incrementalBounds: mapboxgl.LngLatBounds | null = null;
 
     function addFeaturesIncrementally(features: GeoJSON.Feature[]) {
-      let added = 0
+      let added = 0;
       for (const feature of features) {
-        const props = feature.properties as Record<string, unknown> | undefined
-        const zipVal = props ? (props['ZCTA5'] ?? props['GEOID']) : undefined
-        const zip = zipVal ? String(zipVal) : ''
-        if (!zip) continue
-        if (seenZips.has(zip)) continue
-        seenZips.add(zip)
-        allZipGeoJSON.push(feature)
-        added++
+        const props = feature.properties as Record<string, unknown> | undefined;
+        const zipVal = props ? (props["ZCTA5"] ?? props["GEOID"]) : undefined;
+        const zip = zipVal ? String(zipVal) : "";
+        if (!zip) continue;
+        if (seenZips.has(zip)) continue;
+        seenZips.add(zip);
+        allZipGeoJSON.push(feature);
+        added++;
 
         // extend bounds
         try {
           if (!incrementalBounds) {
-            incrementalBounds = new mapboxgl.LngLatBounds()
+            incrementalBounds = new mapboxgl.LngLatBounds();
           }
-          if (feature.geometry && 'coordinates' in feature.geometry) {
-            if (feature.geometry.type === 'Polygon') {
-              ;(feature.geometry as GeoJSON.Polygon).coordinates[0].forEach(
+          if (feature.geometry && "coordinates" in feature.geometry) {
+            if (feature.geometry.type === "Polygon") {
+              (feature.geometry as GeoJSON.Polygon).coordinates[0].forEach(
                 (coord) => {
-                  incrementalBounds!.extend(coord as [number, number])
-                }
-              )
-            } else if (feature.geometry.type === 'MultiPolygon') {
-              ;(feature.geometry as GeoJSON.MultiPolygon).coordinates.forEach(
+                  incrementalBounds!.extend(coord as [number, number]);
+                },
+              );
+            } else if (feature.geometry.type === "MultiPolygon") {
+              (feature.geometry as GeoJSON.MultiPolygon).coordinates.forEach(
                 (polygon) => {
                   polygon[0].forEach((coord) => {
-                    incrementalBounds!.extend(coord as [number, number])
-                  })
-                }
-              )
+                    incrementalBounds!.extend(coord as [number, number]);
+                  });
+                },
+              );
             }
           }
         } catch {
@@ -291,102 +291,102 @@ async function searchCity() {
         }
       }
 
-      totalZipCount.value = allZipGeoJSON.length
+      totalZipCount.value = allZipGeoJSON.length;
 
       // update source data
-      const source = map!.getSource('zip-codes') as
+      const source = map!.getSource("zip-codes") as
         | mapboxgl.GeoJSONSource
-        | undefined
+        | undefined;
       if (source) {
         try {
-          source.setData({ type: 'FeatureCollection', features: allZipGeoJSON })
+          source.setData({type: "FeatureCollection", features: allZipGeoJSON});
         } catch (e) {
-          console.warn('Failed to set source data incrementally:', e)
+          console.warn("Failed to set source data incrementally:", e);
         }
       }
 
       // update paint to reflect selectedZips
       if (map) {
-        map.setPaintProperty('zip-fill', 'fill-color', [
-          'case',
-          ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
-          '#10B981',
-          '#3B82F6',
-        ])
-        map.setPaintProperty('zip-fill', 'fill-opacity', [
-          'case',
-          ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
+        map.setPaintProperty("zip-fill", "fill-color", [
+          "case",
+          ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
+          "#10B981",
+          "#3B82F6",
+        ]);
+        map.setPaintProperty("zip-fill", "fill-opacity", [
+          "case",
+          ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
           0.4,
           0.2,
-        ])
-        map.setPaintProperty('zip-border', 'line-color', [
-          'case',
-          ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
-          '#10B981',
-          '#3B82F6',
-        ])
+        ]);
+        map.setPaintProperty("zip-border", "line-color", [
+          "case",
+          ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
+          "#10B981",
+          "#3B82F6",
+        ]);
       }
       try {
         if (incrementalBounds && allZipGeoJSON.length > 0) {
-          map!.fitBounds(incrementalBounds, { padding: 20 })
+          map!.fitBounds(incrementalBounds, {padding: 20});
         }
       } catch {
         // ignore fit errors
       }
 
-      return added
+      return added;
     }
 
-    ensureZipSourceAndLayers()
+    ensureZipSourceAndLayers();
 
     // Attach click handlers once (after layers exist)
-    map!.on('click', 'zip-fill', (e) => {
+    map!.on("click", "zip-fill", (e) => {
       if (e.features && e.features[0]) {
         const zip =
-          e.features[0].properties?.ZCTA5 || e.features[0].properties?.GEOID
-        if (zip) toggleZipSelection(zip.toString())
+          e.features[0].properties?.ZCTA5 || e.features[0].properties?.GEOID;
+        if (zip) toggleZipSelection(zip.toString());
       }
-    })
+    });
     map!.on(
-      'mouseenter',
-      'zip-fill',
-      () => (map!.getCanvas().style.cursor = 'pointer')
-    )
+      "mouseenter",
+      "zip-fill",
+      () => (map!.getCanvas().style.cursor = "pointer"),
+    );
     map!.on(
-      'mouseleave',
-      'zip-fill',
-      () => (map!.getCanvas().style.cursor = '')
-    )
+      "mouseleave",
+      "zip-fill",
+      () => (map!.getCanvas().style.cursor = ""),
+    );
 
     // Step 2: Parallelize Census ZIP queries, add incrementally on resolve
-    loadingMessage.value = 'Loading ZIP code boundaries...'
+    loadingMessage.value = "Loading ZIP code boundaries...";
     const geometryJson = JSON.stringify({
       xmin: minLon,
       ymin: minLat,
       xmax: maxLon,
       ymax: maxLat,
-      spatialReference: { wkid: 4326 },
-    })
+      spatialReference: {wkid: 4326},
+    });
 
     const zipResponse = await fetchWithTimeout(
       `${config.public.BACKEND_URL}offline/polygons?geometry=${encodeURIComponent(geometryJson)}`,
-      60000
-    )
+      60000,
+    );
 
     if (!zipResponse.ok) {
-      throw new Error(`Failed to fetch ZIP boundaries: ${zipResponse.status}`)
+      throw new Error(`Failed to fetch ZIP boundaries: ${zipResponse.status}`);
     }
 
-    const zipGeojson = await zipResponse.json()
-    addFeaturesIncrementally(zipGeojson?.features || [])
+    const zipGeojson = await zipResponse.json();
+    addFeaturesIncrementally(zipGeojson?.features || []);
 
     if (allZipGeoJSON.length === 0) {
-      throw new Error('No ZIP code boundaries found for this region.')
+      throw new Error("No ZIP code boundaries found for this region.");
     }
 
-    loadingMessage.value = 'Displaying ZIP codes...'
-    totalZipCount.value = allZipGeoJSON.length
-    successMessage.value = `Found ${allZipGeoJSON.length} unique ZIP code areas. Click to select.`
+    loadingMessage.value = "Displaying ZIP codes...";
+    totalZipCount.value = allZipGeoJSON.length;
+    successMessage.value = `Found ${allZipGeoJSON.length} unique ZIP code areas. Click to select.`;
     // let successfulCities = 0
 
     // const censusPromises = validGeocodingResults.map(async ({ city, bbox }) => {
@@ -436,171 +436,171 @@ async function searchCity() {
     // totalZipCount.value = allZipGeoJSON.length
     // successMessage.value = `Found ${allZipGeoJSON.length} unique ZIP code areas across ${successfulCities} cities. Click to select.`
   } catch (err) {
-    console.error('Search error:', err)
-    showMap.value = false
-    error.value = err instanceof Error ? err.message : 'Unexpected error'
+    console.error("Search error:", err);
+    showMap.value = false;
+    error.value = err instanceof Error ? err.message : "Unexpected error";
   } finally {
-    loading.value = false
-    loadingMessage.value = ''
+    loading.value = false;
+    loadingMessage.value = "";
   }
 }
 
 async function fetchWithTimeout(url: string, timeout: number = 10000) {
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), timeout)
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {
     const response = await fetch(url, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'TeacherAvailabilityApp/1.0',
+        "User-Agent": "TeacherAvailabilityApp/1.0",
       },
-    })
-    return response
+    });
+    return response;
   } finally {
-    clearTimeout(timeoutId)
+    clearTimeout(timeoutId);
   }
 }
 
 async function initializeMap(lat: number, lon: number) {
-  await nextTick()
+  await nextTick();
 
   if (!mapContainer.value) {
-    throw new Error('Map container not found')
+    throw new Error("Map container not found");
   }
 
   if (map) {
-    map.remove()
-    map = null
+    map.remove();
+    map = null;
   }
 
-  mapboxgl.accessToken = config.public.mapboxApiKey
+  mapboxgl.accessToken = config.public.mapboxApiKey;
 
   map = new mapboxgl.Map({
     container: mapContainer.value,
-    style: 'mapbox://styles/mapbox/streets-v12',
+    style: "mapbox://styles/mapbox/streets-v12",
     center: [lon, lat],
     zoom: 10,
     minZoom: 6,
     maxZoom: 18,
-  })
+  });
 
-  map.addControl(new mapboxgl.NavigationControl())
+  map.addControl(new mapboxgl.NavigationControl());
 
   // Wait for the map style to load before adding sources/layers
   return new Promise<void>((resolve, reject) => {
     if (map!.isStyleLoaded()) {
-      resolve()
-      return
+      resolve();
+      return;
     }
 
-    map!.on('load', () => {
-      resolve()
-    })
+    map!.on("load", () => {
+      resolve();
+    });
 
-    map!.on('error', (e) => {
-      reject(e.error)
-    })
-  })
+    map!.on("error", (e) => {
+      reject(e.error);
+    });
+  });
 }
 
 function toggleZipSelection(zipCode: string) {
-  const idx = selectedZips.value.indexOf(zipCode)
+  const idx = selectedZips.value.indexOf(zipCode);
 
   if (idx > -1) {
-    selectedZips.value.splice(idx, 1)
+    selectedZips.value.splice(idx, 1);
   } else {
-    selectedZips.value.push(zipCode)
+    selectedZips.value.push(zipCode);
   }
 
   if (map) {
-    map.setPaintProperty('zip-fill', 'fill-color', [
-      'case',
-      ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
-      '#10B981',
-      '#3B82F6',
-    ])
-    map.setPaintProperty('zip-fill', 'fill-opacity', [
-      'case',
-      ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
+    map.setPaintProperty("zip-fill", "fill-color", [
+      "case",
+      ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
+      "#10B981",
+      "#3B82F6",
+    ]);
+    map.setPaintProperty("zip-fill", "fill-opacity", [
+      "case",
+      ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
       0.4,
       0.2,
-    ])
-    map.setPaintProperty('zip-border', 'line-color', [
-      'case',
-      ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
-      '#10B981',
-      '#3B82F6',
-    ])
+    ]);
+    map.setPaintProperty("zip-border", "line-color", [
+      "case",
+      ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
+      "#10B981",
+      "#3B82F6",
+    ]);
   }
-  console.log('Toggled ZIP:', zipCode, 'Selected ZIPs:', selectedZips.value)
+  console.log("Toggled ZIP:", zipCode, "Selected ZIPs:", selectedZips.value);
 }
 
 function removeZip(zipCode: string) {
   try {
-    const index = selectedZips.value.indexOf(zipCode)
+    const index = selectedZips.value.indexOf(zipCode);
     if (index > -1) {
-      selectedZips.value.splice(index, 1)
+      selectedZips.value.splice(index, 1);
 
       if (map) {
-        map.setPaintProperty('zip-fill', 'fill-color', [
-          'case',
-          ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
-          '#10B981',
-          '#3B82F6',
-        ])
-        map.setPaintProperty('zip-fill', 'fill-opacity', [
-          'case',
-          ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
+        map.setPaintProperty("zip-fill", "fill-color", [
+          "case",
+          ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
+          "#10B981",
+          "#3B82F6",
+        ]);
+        map.setPaintProperty("zip-fill", "fill-opacity", [
+          "case",
+          ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
           0.4,
           0.2,
-        ])
-        map.setPaintProperty('zip-border', 'line-color', [
-          'case',
-          ['in', ['get', 'ZCTA5'], ['literal', selectedZips.value]],
-          '#10B981',
-          '#3B82F6',
-        ])
+        ]);
+        map.setPaintProperty("zip-border", "line-color", [
+          "case",
+          ["in", ["get", "ZCTA5"], ["literal", selectedZips.value]],
+          "#10B981",
+          "#3B82F6",
+        ]);
       }
     }
   } catch (err) {
-    console.error('Error removing ZIP:', err)
-    error.value = 'Error removing ZIP code'
+    console.error("Error removing ZIP:", err);
+    error.value = "Error removing ZIP code";
   }
 }
 
 function clearSelection() {
   try {
-    selectedZips.value = []
+    selectedZips.value = [];
 
     // Update map layers
     if (map) {
-      map.setPaintProperty('zip-fill', 'fill-color', '#3B82F6')
-      map.setPaintProperty('zip-fill', 'fill-opacity', 0.2)
-      map.setPaintProperty('zip-border', 'line-color', '#3B82F6')
+      map.setPaintProperty("zip-fill", "fill-color", "#3B82F6");
+      map.setPaintProperty("zip-fill", "fill-opacity", 0.2);
+      map.setPaintProperty("zip-border", "line-color", "#3B82F6");
     }
 
-    successMessage.value = 'All selections cleared'
+    successMessage.value = "All selections cleared";
   } catch (err) {
-    console.error('Error clearing selection:', err)
-    error.value = 'Error clearing selections'
+    console.error("Error clearing selection:", err);
+    error.value = "Error clearing selections";
   }
 }
 
 async function searchTeacher() {
   if (selectedZips.value.length === 0) {
-    error.value = 'Please select at least one ZIP code'
-    return
+    error.value = "Please select at least one ZIP code";
+    return;
   }
 
-  emit('on-search', selectedArea.value, [...selectedZips.value])
+  emit("on-search", selectedArea.value, [...selectedZips.value]);
 }
 
 onMounted(() => {
   if (selectedArea.value) {
-    searchCity()
+    searchCity();
   }
-})
+});
 </script>
 
 <template>
@@ -627,7 +627,7 @@ onMounted(() => {
           size="small"
           @click="searchCity"
         >
-          {{ loading ? 'Loading...' : 'Show in map' }}
+          {{ loading ? "Loading..." : "Show in map" }}
         </Button>
       </div>
     </div>

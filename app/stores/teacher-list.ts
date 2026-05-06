@@ -1,4 +1,6 @@
 import { usePagination } from './pagination'
+import { getUserAxios } from '../utils/userAxios'
+import { wrapApiCall } from '../utils/handle-try-catch'
 
 export const useTeacherListStore = defineStore('teacherListStore', {
   state: () => ({
@@ -9,8 +11,9 @@ export const useTeacherListStore = defineStore('teacherListStore', {
   },
   actions: {
     async fetchTeachers(query?: string) {
-      const token = useCookie('_admin_token').value
-      const axios = getAdminAxios()
+      const { getTokenFromCookie } = useAuthStore()
+      const token = getTokenFromCookie()
+      const axios = getUserAxios()
 
       const paginationStore = usePagination()
 

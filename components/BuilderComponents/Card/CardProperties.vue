@@ -1,40 +1,40 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
+import {ref, watch} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const cardProps = ref({})
+const store = usePageBuilderStore();
+const cardProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'card') {
-      cardProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "card") {
+      cardProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Update function
 const updateCardProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, cardProps.value)
+    store.updateComponentProps(props.component.id, cardProps.value);
   }
-}
+};
 
 // Set alignment function
 const setAlignment = (alignment) => {
-  cardProps.value.styling.alignment = alignment
-  updateCardProps()
-}
+  cardProps.value.styling.alignment = alignment;
+  updateCardProps();
+};
 </script>
 
 <template>
@@ -92,8 +92,8 @@ const setAlignment = (alignment) => {
           size="small"
           @update:model-value="updateCardProps"
           :options="[
-            { label: 'Top', value: 'top' },
-            { label: 'Left', value: 'left' },
+            {label: 'Top', value: 'top'},
+            {label: 'Left', value: 'left'},
           ]"
           option-label="label"
           option-value="value"
@@ -181,13 +181,13 @@ const setAlignment = (alignment) => {
           size="small"
           @update:model-value="updateCardProps"
           :options="[
-            { label: 'None', value: 'none' },
-            { label: 'X-Small', value: 'xsmall' },
-            { label: 'Small', value: 'small' },
-            { label: 'Medium', value: 'medium' },
-            { label: 'Large', value: 'large' },
-            { label: 'X-Large', value: 'xlarge' },
-            { label: 'XX-Large', value: 'xxlarge' },
+            {label: 'None', value: 'none'},
+            {label: 'X-Small', value: 'xsmall'},
+            {label: 'Small', value: 'small'},
+            {label: 'Medium', value: 'medium'},
+            {label: 'Large', value: 'large'},
+            {label: 'X-Large', value: 'xlarge'},
+            {label: 'XX-Large', value: 'xxlarge'},
           ]"
           option-label="label"
           option-value="value"

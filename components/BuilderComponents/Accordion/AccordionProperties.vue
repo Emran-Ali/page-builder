@@ -1,75 +1,75 @@
 <script setup>
-import { ref, watch } from 'vue'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
-import Button from 'primevue/button'
-import Dropdown from 'primevue/dropdown'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
+import {ref, watch} from "vue";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+import {usePageBuilderStore} from "@stores/pageBuilder";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const accordionProps = ref({})
+const store = usePageBuilderStore();
+const accordionProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'accordion') {
-      accordionProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "accordion") {
+      accordionProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Update function with real-time updates
 const updateAccordionProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, accordionProps.value)
+    store.updateComponentProps(props.component.id, accordionProps.value);
   }
-}
+};
 
 const addPanel = () => {
   if (!accordionProps.value.panels) {
-    accordionProps.value.panels = []
+    accordionProps.value.panels = [];
   }
   accordionProps.value.panels.push({
     header: `Accordion Header ${accordionProps.value.panels.length + 1}`,
     content:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.',
-  })
-  updateAccordionProps()
-}
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
+  });
+  updateAccordionProps();
+};
 
 const removePanel = (index) => {
   if (accordionProps.value.panels && accordionProps.value.panels.length > 1) {
-    accordionProps.value.panels.splice(index, 1)
-    updateAccordionProps()
+    accordionProps.value.panels.splice(index, 1);
+    updateAccordionProps();
   }
-}
+};
 
 const updatePanel = (index, field, value) => {
   if (accordionProps.value.panels && accordionProps.value.panels[index]) {
-    accordionProps.value.panels[index][field] = value
-    updateAccordionProps()
+    accordionProps.value.panels[index][field] = value;
+    updateAccordionProps();
   }
-}
+};
 
 const updateProp = (key, value) => {
-  accordionProps.value[key] = value
-  updateAccordionProps()
-}
+  accordionProps.value[key] = value;
+  updateAccordionProps();
+};
 
 const headingOptions = [
-  { label: 'Heading 1', value: 'h1' },
-  { label: 'Heading 2', value: 'h2' },
-  { label: 'Heading 3', value: 'h3' },
-]
+  {label: "Heading 1", value: "h1"},
+  {label: "Heading 2", value: "h2"},
+  {label: "Heading 3", value: "h3"},
+];
 </script>
 
 <template>

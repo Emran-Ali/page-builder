@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
-import ctaIcon from '../icons/ctablock.png'
-import gridBlockIcon from '../icons/gridblock.png'
-import heroBlockIcon from '../icons/heroblock.png'
-import listItemIcon from '../icons/listblock.png'
-import mapBlockIcon from '../icons/mapblock.png'
-import teacherListIcon from '../icons/persongridblock.png'
-import relatedarticles from '../icons/relatedarticles.png'
-import testimonialIcon from '../icons/testimonialblock.png'
+import ctaIcon from '../../icons/ctablock.png'
+import gridBlockIcon from '../../icons/gridblock.png'
+import heroBlockIcon from '../../icons/heroblock.png'
+import listItemIcon from '../../icons/listblock.png'
+import mapBlockIcon from '../../icons/mapblock.png'
+import teacherListIcon from '../../icons/persongridblock.png'
+import relatedarticles from '../../icons/relatedarticles.png'
+import testimonialIcon from '../../icons/testimonialblock.png'
 
 export const usePageBuilderStore = defineStore('pageBuilder', {
   state: () => ({

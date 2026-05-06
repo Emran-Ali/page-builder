@@ -1,28 +1,28 @@
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
+import {computed, nextTick, onMounted, onUnmounted, ref} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
 
-const pageBuilderStore = usePageBuilderStore()
+const pageBuilderStore = usePageBuilderStore();
 
 const props = defineProps({
-  id: { type: String, default: '' },
+  id: {type: String, default: ""},
   content: {
     type: String,
     default:
       '<p style="text-align: center; color: red;">Sample Rich Text Content</p>',
   },
-  paddingHorizontal: { type: String, default: '0px' },
-  paddingVertical: { type: String, default: '24px' },
-  marginHorizontal: { type: String, default: '0px' },
-  marginVertical: { type: String, default: '0px' },
-  backgroundColor: { type: String, default: 'transparent' },
-  isEditing: { type: Boolean, default: false },
-})
+  paddingHorizontal: {type: String, default: "0px"},
+  paddingVertical: {type: String, default: "24px"},
+  marginHorizontal: {type: String, default: "0px"},
+  marginVertical: {type: String, default: "0px"},
+  backgroundColor: {type: String, default: "transparent"},
+  isEditing: {type: Boolean, default: false},
+});
 
 // Stable unique ID — never rely on the prop being set
 const uid = computed(
-  () => props.id || `rte-${Math.random().toString(36).slice(2)}`
-)
+  () => props.id || `rte-${Math.random().toString(36).slice(2)}`,
+);
 
 const containerStyles = computed(() => ({
   paddingLeft: props.paddingHorizontal,
@@ -34,23 +34,23 @@ const containerStyles = computed(() => ({
   marginTop: props.marginVertical,
   marginBottom: props.marginVertical,
   backgroundColor: props.backgroundColor,
-}))
+}));
 
 const sanitizedContent = computed(() =>
-  (props.content ?? '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
+  (props.content ?? "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/&#x2F;/g, '/')
-)
+    .replace(/&#x2F;/g, "/"),
+);
 
 const iframeContent = computed(() => {
   // height:auto prevents html/body from stretching to the iframe viewport size,
   // which would cause scrollHeight to be inflated and never shrink on collapse.
-  const noScrollStyle = `<style>html,body{margin:0;padding:0;overflow:hidden;width:100%;height:auto;}</style>`
+  const noScrollStyle = `<style>html,body{margin:0;padding:0;overflow:hidden;width:100%;height:auto;}</style>`;
 
   // Script runs inside the iframe:
   // - reports height immediately and on every DOM resize (accordion, images, etc.)
@@ -85,44 +85,44 @@ const iframeContent = computed(() => {
     }
   });
 })();
-<\/script>`
+<\/script>`;
 
-  let html = sanitizedContent.value
+  let html = sanitizedContent.value;
 
   // Inject no-scroll styles
-  if (html.includes('</head>')) {
-    html = html.replace('</head>', noScrollStyle + '</head>')
-  } else if (html.includes('<body')) {
-    html = html.replace(/<body([^>]*)>/, '<body$1>' + noScrollStyle)
+  if (html.includes("</head>")) {
+    html = html.replace("</head>", noScrollStyle + "</head>");
+  } else if (html.includes("<body")) {
+    html = html.replace(/<body([^>]*)>/, "<body$1>" + noScrollStyle);
   } else {
-    html = noScrollStyle + html
+    html = noScrollStyle + html;
   }
 
   // Inject resize script before closing body/html, or append
-  if (html.includes('</body>')) {
-    return html.replace('</body>', resizeScript + '</body>')
+  if (html.includes("</body>")) {
+    return html.replace("</body>", resizeScript + "</body>");
   }
-  if (html.includes('</html>')) {
-    return html.replace('</html>', resizeScript + '</html>')
+  if (html.includes("</html>")) {
+    return html.replace("</html>", resizeScript + "</html>");
   }
-  return html + resizeScript
-})
+  return html + resizeScript;
+});
 
-const iframeHeight = ref('0px')
-const iframeRef = ref(null)
-const isLoading = ref(true)
+const iframeHeight = ref("0px");
+const iframeRef = ref(null);
+const isLoading = ref(true);
 
 function readHeightFromDom() {
   // Direct DOM read — works because srcdoc iframes are same-origin.
   // Uses offsetHeight to match the iframe-side measurement (avoids the
   // scrollHeight inflation issue when iframe is already tall).
   try {
-    const doc = iframeRef.value?.contentDocument
-    if (!doc) return
-    const h = doc.body?.offsetHeight || 0
+    const doc = iframeRef.value?.contentDocument;
+    if (!doc) return;
+    const h = doc.body?.offsetHeight || 0;
     if (h > 0) {
-      iframeHeight.value = `${h}px`
-      isLoading.value = false
+      iframeHeight.value = `${h}px`;
+      isLoading.value = false;
     }
   } catch {
     // cross-origin access denied — won't happen with srcdoc iframes
@@ -131,44 +131,44 @@ function readHeightFromDom() {
 
 function onIframeLoad() {
   // Handles the normal client-render case where data loads after hydration.
-  readHeightFromDom()
+  readHeightFromDom();
   // Also request a postMessage report so ResizeObserver is guaranteed to be
   // set up inside the iframe before any subsequent mutations.
   iframeRef.value?.contentWindow?.postMessage(
-    { type: 'requestHeight', id: uid.value },
-    '*'
-  )
+    {type: "requestHeight", id: uid.value},
+    "*",
+  );
 }
 
 function onMessage(event) {
-  if (!event.data || typeof event.data !== 'object') return
+  if (!event.data || typeof event.data !== "object") return;
 
-  if (event.data.type === 'iframeHeight' && event.data.id === uid.value) {
-    iframeHeight.value = `${event.data.height}px`
-    isLoading.value = false
+  if (event.data.type === "iframeHeight" && event.data.id === uid.value) {
+    iframeHeight.value = `${event.data.height}px`;
+    isLoading.value = false;
   }
 
-  if (event.data.type === 'iframeClick' && event.data.id === uid.value) {
-    pageBuilderStore.selectComponent(props.id)
+  if (event.data.type === "iframeClick" && event.data.id === uid.value) {
+    pageBuilderStore.selectComponent(props.id);
   }
 }
 
 onMounted(() => {
-  window.addEventListener('message', onMessage)
+  window.addEventListener("message", onMessage);
 
   // SSR race-condition fix: the iframe may have already loaded (and fired its
   // initial postMessage) before this listener was registered. Ask it to re-report.
   nextTick(() => {
     iframeRef.value?.contentWindow?.postMessage(
-      { type: 'requestHeight', id: uid.value },
-      '*'
-    )
-  })
-})
+      {type: "requestHeight", id: uid.value},
+      "*",
+    );
+  });
+});
 
 onUnmounted(() => {
-  window.removeEventListener('message', onMessage)
-})
+  window.removeEventListener("message", onMessage);
+});
 </script>
 
 <template>
@@ -181,7 +181,7 @@ onUnmounted(() => {
         frameborder="0"
         width="100%"
         scrolling="no"
-        :style="{ height: iframeHeight }"
+        :style="{height: iframeHeight}"
         @load="onIframeLoad"
       />
       <div v-if="isLoading" class="loading-overlay">
@@ -249,7 +249,7 @@ onUnmounted(() => {
   font-size: 14px;
   color: #6b7280;
   font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 @keyframes spin {

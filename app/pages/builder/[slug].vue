@@ -1,42 +1,42 @@
 <script setup>
-import Canvas from '~/components/PageBuilder/Canvas.vue'
-import PropertyPanel from '~/components/PageBuilder/PropertyPanel.vue'
-import Toolbar from '~/components/PageBuilder/Toolbar.vue'
-import Sidebar from '~/components/PageBuilder/Sidebar.vue'
+import Canvas from "~/components/PageBuilder/Canvas.vue";
+import PropertyPanel from "~/components/PageBuilder/PropertyPanel.vue";
+import Toolbar from "~/components/PageBuilder/Toolbar.vue";
+import Sidebar from "~/components/PageBuilder/Sidebar.vue";
 
-import { useTheme } from '~/themes/useTheme'
-import { usePageCrudStore } from '~/layers/page-builder/stores/page-crud'
-import { usePageBuilderStore } from '~/layers/page-builder/stores/pageBuilder'
+import {useTheme} from "~/themes/useTheme";
+import {usePageCrudStore} from "~/layers/page-builder/stores/page-crud";
+import {usePageBuilderStore} from "~/layers/page-builder/stores/pageBuilder";
 
-useTheme()
+useTheme();
 
 // Set page meta
 definePageMeta({
-  title: 'Droptik',
-  layout: 'false',
-  middleware: ['admin'],
-})
+  title: "Droptik",
+  layout: "false",
+  middleware: ["admin"],
+});
 
-const { slug } = useRoute().params
-const store = usePageBuilderStore()
-const pageCrudStore = usePageCrudStore()
-const { is } = useGlobalStore()
+const {slug} = useRoute().params;
+const store = usePageBuilderStore();
+const pageCrudStore = usePageCrudStore();
+const {is} = useGlobalStore();
 
-const currentPage = computed(() => pageCrudStore.currentPage)
+const currentPage = computed(() => pageCrudStore.currentPage);
 
 onMounted(async () => {
   try {
-    await pageCrudStore.getPage(slug)
+    await pageCrudStore.getPage(slug);
     if (currentPage.value?.pageJson) {
-      store.loadPage(currentPage.value?.pageJson, false)
+      store.loadPage(currentPage.value?.pageJson, false);
     }
   } catch (error) {
-    console.error('Error loading page:', error)
-    navigateTo('/404')
+    console.error("Error loading page:", error);
+    navigateTo("/404");
   }
-})
+});
 
-const isPreview = computed(() => store.isPreview)
+const isPreview = computed(() => store.isPreview);
 </script>
 
 <template>
@@ -71,6 +71,7 @@ const isPreview = computed(() => store.isPreview)
     </div>
   </div>
 </template>
+
 <style scoped>
 .spinner-wrapper {
   --p-progressspinner-color-one: #000000;

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import RatingEmptyStar from '~/components/base/icons/RatingEmptyStarIcon.vue'
-import RatingFullStar from '~/components/base/icons/RatingFullStarIcon.vue'
-import RatingHalfStar from '~/components/base/icons/RatingHalfStarIcon.vue'
-import { usePageBuilderStore } from '~/layers/page-builder/stores/pageBuilder'
+import RatingEmptyStar from "@components/base/icons/RatingEmptyStarIcon.vue";
+import RatingFullStar from "@components/base/icons/RatingFullStarIcon.vue";
+import RatingHalfStar from "@components/base/icons/RatingHalfStarIcon.vue";
+import {usePageBuilderStore} from "@layers/page-builder/stores/pageBuilder";
 
 const props = defineProps({
   course: {
@@ -13,104 +13,106 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 
-const authStore = useAuthStore()
-const savedTeacherStore = useSavedTeacher()
-const { is } = useGlobalStore()
+const authStore = useAuthStore();
+const savedTeacherStore = useSavedTeacher();
+const {is} = useGlobalStore();
 
 const studentId = computed(() => {
-  return authStore.getStudentProfileId
-})
+  return authStore.getStudentProfileId;
+});
 
 const emit = defineEmits<{
-  (e: 'book', teacherSlug: string): void
-}>()
+  (e: "book", teacherSlug: string): void;
+}>();
 
 function handleBook() {
-  if (!isPreview.value) return
-  emit('book', props.course?.teacher?.slug)
+  if (!isPreview.value) return;
+  emit("book", props.course?.teacher?.slug);
 }
 
-const saveTeacherIds = computed(() => savedTeacherStore.getFavouriteTeacherIds)
+const saveTeacherIds = computed(() => savedTeacherStore.getFavouriteTeacherIds);
 
 const isSaved = computed(() => {
   return (
     saveTeacherIds.value?.some(
-      (item: number) => item == props.course?.teacherId
+      (item: number) => item == props.course?.teacherId,
     ) ?? false
-  )
-})
+  );
+});
 
 // Education computed properties
 const displayedEducations = computed(() =>
-  (props.course?.teacher?.education || []).slice(0, 4)
-)
+  (props.course?.teacher?.education || []).slice(0, 4),
+);
 
 const hasMoreEducations = computed(
-  () => (props.course?.teacher?.education || []).length > 4
-)
+  () => (props.course?.teacher?.education || []).length > 4,
+);
 
 const remainingEducations = computed(() =>
-  (props.course?.teacher?.education || []).slice(4)
-)
+  (props.course?.teacher?.education || []).slice(4),
+);
 
 const remainingEducationNames = computed(() =>
-  remainingEducations.value.map((item) => item.degree).join(', ')
-)
+  remainingEducations.value.map((item) => item.degree).join(", "),
+);
 
 // Background colors for education items
 const educationColors = [
-  '#F7F3D1', // Light yellow
-  '#D1E9F7', // Light blue
-  '#E8F5E8', // Light green
-  '#F5E8F5', // Light purple
-]
+  "#F7F3D1", // Light yellow
+  "#D1E9F7", // Light blue
+  "#E8F5E8", // Light green
+  "#F5E8F5", // Light purple
+];
 
 const displayedDisciplines = computed(() =>
-  (props.course?.teacher?.teacherDisciplines || []).slice(0, 4)
-)
+  (props.course?.teacher?.teacherDisciplines || []).slice(0, 4),
+);
 
 const hasMoreDisciplines = computed(
-  () => (props.course?.teacher?.teacherDisciplines || []).length > 4
-)
+  () => (props.course?.teacher?.teacherDisciplines || []).length > 4,
+);
 
 const remainingDisciplines = computed(() =>
-  (props.course?.teacher?.teacherDisciplines || []).slice(4)
-)
+  (props.course?.teacher?.teacherDisciplines || []).slice(4),
+);
 
 const remainingDisciplineNames = computed(() =>
-  remainingDisciplines.value.map((item) => item?.discipline?.name).join(', ')
-)
+  remainingDisciplines.value.map((item) => item?.discipline?.name).join(", "),
+);
 
-const store = usePageBuilderStore()
-const isPreview = computed(() => store.isPreview)
+const store = usePageBuilderStore();
+const isPreview = computed(() => store.isPreview);
 
 const handleAddRemove = async (teacherId: number) => {
-  if (!isPreview.value) return
+  if (!isPreview.value) return;
   try {
     if (!studentId.value) {
-      const route = useRoute()
-      const fullPath = route.fullPath
-      return await navigateTo(`/login?redirect=${encodeURIComponent(fullPath)}`)
+      const route = useRoute();
+      const fullPath = route.fullPath;
+      return await navigateTo(
+        `/login?redirect=${encodeURIComponent(fullPath)}`,
+      );
     }
 
     if (!isSaved.value) {
-      await savedTeacherStore.addFavouriteTeacher(teacherId)
+      await savedTeacherStore.addFavouriteTeacher(teacherId);
     } else {
-      await savedTeacherStore.removeFavouriteTeacher(teacherId)
+      await savedTeacherStore.removeFavouriteTeacher(teacherId);
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 const handleTeacherNameClick = (slug: string) => {
-  if (!isPreview.value) return
+  if (!isPreview.value) return;
 
-  if (!slug) return
+  if (!slug) return;
 
-  navigateTo(`/teacher-profile/${slug}`)
-}
+  navigateTo(`/teacher-profile/${slug}`);
+};
 </script>
 
 <template>
@@ -137,9 +139,9 @@ const handleTeacherNameClick = (slug: string) => {
             <h2 class="title">
               {{
                 course?.teacher?.firstName +
-                ' ' +
+                " " +
                 course?.teacher?.lastName[0] +
-                '.'
+                "."
               }}
             </h2>
             <BaseGlobalIcon class="text-blue-500" component-name="BadgeIcon" />
@@ -200,9 +202,9 @@ const handleTeacherNameClick = (slug: string) => {
             <h2 class="title">
               {{
                 course?.teacher?.firstName +
-                ' ' +
+                " " +
                 course?.teacher?.lastName[0] +
-                '.'
+                "."
               }}
             </h2>
             <BaseGlobalIcon class="text-blue-500" component-name="BadgeIcon" />
@@ -254,7 +256,7 @@ const handleTeacherNameClick = (slug: string) => {
               v-for="(education, index) in displayedEducations"
               :key="education?.id"
               class="w-fit flex items-center gap-1 text-xs sm:text-sm text-black rounded-sm px-2 py-1"
-              :style="{ backgroundColor: educationColors[index] }"
+              :style="{backgroundColor: educationColors[index]}"
             >
               <svg
                 width="10"
@@ -375,9 +377,9 @@ const handleTeacherNameClick = (slug: string) => {
           <p class="paragraph_secondary max-w-[485px] mt-4">
             {{
               course?.teacher?.profileSummary
-                ?.split(' ')
+                ?.split(" ")
                 .slice(0, 15)
-                .join(' ')
+                .join(" ")
             }}<span
               v-if="course?.teacher?.profileSummary?.split(' ').length > 15"
               >...</span
@@ -417,7 +419,7 @@ const handleTeacherNameClick = (slug: string) => {
         :disabled="is('removeFavouriteTeacher') || is('addFavouriteTeacher')"
         @click="handleAddRemove(props.course?.teacherId)"
       >
-        {{ isSaved ? 'Remove from favorite' : 'Add to favorite' }}</Button
+        {{ isSaved ? "Remove from favorite" : "Add to favorite" }}</Button
       >
     </div>
   </div>

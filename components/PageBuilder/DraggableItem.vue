@@ -1,63 +1,63 @@
 <script setup>
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import ComponentRenderer from './ComponentRenderer.vue'
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import ComponentRenderer from "./ComponentRenderer.vue";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const emit = defineEmits(['drag-start'])
+const emit = defineEmits(["drag-start"]);
 
-const store = usePageBuilderStore()
-const isHovered = ref(false)
-const isDragging = ref(false)
+const store = usePageBuilderStore();
+const isHovered = ref(false);
+const isDragging = ref(false);
 
-const isPreview = computed(() => store.isPreview)
+const isPreview = computed(() => store.isPreview);
 const isSelected = computed(
-  () => store.selectedComponent === props.component.id
-)
+  () => store.selectedComponent === props.component.id,
+);
 
 const selectComponent = () => {
   if (!isPreview.value) {
-    store.selectComponent(props.component.id)
+    store.selectComponent(props.component.id);
   }
-}
+};
 
 const updateComponentProps = (newProps) => {
-  store.updateComponentProps(props.component.id, newProps)
-}
+  store.updateComponentProps(props.component.id, newProps);
+};
 
 const handleDragStart = (event) => {
   if (isPreview.value || props.component.isEditing) {
-    event.preventDefault()
-    return
+    event.preventDefault();
+    return;
   }
 
-  isDragging.value = true
-  event.dataTransfer.effectAllowed = 'move'
-  event.dataTransfer.setData('component-id', props.component.id)
+  isDragging.value = true;
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("component-id", props.component.id);
 
   // Add a slight opacity to the dragged element
   setTimeout(() => {
-    event.target.style.opacity = '0.5'
-  }, 0)
+    event.target.style.opacity = "0.5";
+  }, 0);
 
-  emit('drag-start', props.component.id)
-}
+  emit("drag-start", props.component.id);
+};
 
 const handleDragEnd = (event) => {
-  isDragging.value = false
-  event.target.style.opacity = '1'
-}
+  isDragging.value = false;
+  event.target.style.opacity = "1";
+};
 
 const handleDragOver = (event) => {
-  if (isPreview.value || props.component.isEditing) return
-  event.preventDefault()
-  event.dataTransfer.dropEffect = 'move'
-}
+  if (isPreview.value || props.component.isEditing) return;
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
+};
 </script>
 
 <template>

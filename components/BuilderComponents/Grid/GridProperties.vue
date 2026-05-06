@@ -1,28 +1,28 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
+import {ref, watch} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
 
 const props = defineProps({
-  component: { type: Object, required: true },
-})
-const store = usePageBuilderStore()
+  component: {type: Object, required: true},
+});
+const store = usePageBuilderStore();
 
-const gridProps = ref({})
+const gridProps = ref({});
 
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'grid') {
-      gridProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "grid") {
+      gridProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 function selectColumns(value) {
   if (value >= 2 && value <= 4) {
-    gridProps.value.columns = value
-    store.updateComponentProps(props.component.id, { ...gridProps.value })
+    gridProps.value.columns = value;
+    store.updateComponentProps(props.component.id, {...gridProps.value});
   }
 }
 </script>

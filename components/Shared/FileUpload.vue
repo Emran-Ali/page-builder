@@ -1,95 +1,92 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { getImageVersions } from '~/utils/file-versions'
-import type { AxiosRequestConfig } from 'axios'
-import InputText from 'primevue/inputtext'
+import {ref, watch} from "vue";
+import {getImageVersions} from "@utils/file-versions";
+import type {AxiosRequestConfig} from "axios";
+import InputText from "primevue/inputtext";
 
-const emit = defineEmits(['update:model-value'])
+const emit = defineEmits(["update:model-value"]);
 const props = withDefaults(
   defineProps<{
-    modelValue?: string
-    imageVersion?: 'original' | 'optimized' | 'thumb'
+    modelValue?: string;
+    imageVersion?: "original" | "optimized" | "thumb";
   }>(),
   {
-    modelValue: '',
-    imageVersion: 'original',
-  }
-)
+    modelValue: "",
+    imageVersion: "original",
+  },
+);
 
-const isUploading = ref(false)
-const uploadProgress = ref(0)
-const activeTab = ref('upload')
-const imageUrl = ref(props.modelValue)
+const isUploading = ref(false);
+const uploadProgress = ref(0);
+const activeTab = ref("upload");
+const imageUrl = ref(props.modelValue);
 
 // Update imageUrl when modelValue changes from outside
 watch(
   () => props.modelValue,
   (newVal) => {
-    imageUrl.value = newVal
-  }
-)
+    imageUrl.value = newVal;
+  },
+);
 
 // Logic to switch tab if initialized with a URL
-if (props.modelValue && props.modelValue.startsWith('http')) {
-  activeTab.value = 'link'
+if (props.modelValue && props.modelValue.startsWith("http")) {
+  activeTab.value = "link";
 }
 
 async function handleFileUpload(event: Event) {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
 
   if (!file) {
-    return
+    return;
   }
 
   // Upload the file immediately
-  isUploading.value = true
-  uploadProgress.value = 0
+  isUploading.value = true;
+  uploadProgress.value = 0;
 
   try {
-    const formData = new FormData()
-    formData.append('file', file!)
+    const formData = new FormData();
+    formData.append("file", file!);
 
     const response = await uploadFile({
       file: formData,
-      url: 'page-builder',
+      url: "page-builder",
       config: {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
-        onUploadProgress: (progressEvent: {
-          loaded: number
-          total?: number
-        }) => {
+        onUploadProgress: (progressEvent: {loaded: number; total?: number}) => {
           if (progressEvent.total) {
             uploadProgress.value = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            )
+              (progressEvent.loaded * 100) / progressEvent.total,
+            );
           }
         },
       },
       showSuccessToast: true,
-    })
+    });
 
     // Extract URL from response
-    const fileUrl = response?.data || null
+    const fileUrl = response?.data || null;
 
     if (fileUrl) {
       // Set the attachment field value
-      const finalUrl = getImageVersions(fileUrl)[props.imageVersion]
-      imageUrl.value = finalUrl
-      emit('update:model-value', finalUrl)
+      const finalUrl = getImageVersions(fileUrl)[props.imageVersion];
+      imageUrl.value = finalUrl;
+      emit("update:model-value", finalUrl);
       // Stay on upload tab
-      activeTab.value = 'upload'
+      activeTab.value = "upload";
     }
   } catch (error) {
-    console.error('Error uploading file:', error)
+    console.error("Error uploading file:", error);
   } finally {
     // Reset input value
     if (target) {
-      target.value = ''
+      target.value = "";
     }
-    isUploading.value = false
+    isUploading.value = false;
   }
 }
 
@@ -99,16 +96,16 @@ async function uploadFile({
   config,
   showSuccessToast = true,
 }: {
-  file: FormData
-  url: string
-  config?: AxiosRequestConfig
-  showSuccessToast: boolean
+  file: FormData;
+  url: string;
+  config?: AxiosRequestConfig;
+  showSuccessToast: boolean;
 }) {
-  const token = useCookie('_admin_token').value
-  const axios = getAdminAxios()
-  const { handleSuccess } = useGlobalStore()
+  const token = useCookie("_admin_token").value;
+  const axios = getAdminAxios();
+  const {handleSuccess} = useGlobalStore();
 
-  return wrapApiCall('uploadFile', async () => {
+  return wrapApiCall("uploadFile", async () => {
     {
       const response = await axios.post(`/file-upload/${url}`, file, {
         ...config,
@@ -116,22 +113,22 @@ async function uploadFile({
           Authorization: `Bearer ${token}`,
           ...config?.headers,
         },
-      })
+      });
 
       if (showSuccessToast) {
         handleSuccess({
-          message: response?.data?.message || 'File uploaded successfully',
-        })
+          message: response?.data?.message || "File uploaded successfully",
+        });
       }
-      return response?.data
+      return response?.data;
     }
-  })
+  });
 }
 
 const clearImage = () => {
-  imageUrl.value = ''
-  emit('update:model-value', '')
-}
+  imageUrl.value = "";
+  emit("update:model-value", "");
+};
 </script>
 
 <template>
@@ -230,8 +227,8 @@ const clearImage = () => {
               :value="uploadProgress"
               :show-value="false"
               :pt="{
-                root: { class: '!h-1.5 rounded-full bg-gray-100' },
-                value: { class: '!h-1.5 rounded-full bg-primary' },
+                root: {class: '!h-1.5 rounded-full bg-gray-100'},
+                value: {class: '!h-1.5 rounded-full bg-primary'},
               }"
             />
           </div>

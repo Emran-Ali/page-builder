@@ -1,99 +1,101 @@
 <script setup lang="ts">
-import RatingEmptyStar from '~/components/base/icons/RatingEmptyStarIcon.vue'
-import RatingFullStar from '~/components/base/icons/RatingFullStarIcon.vue'
-import RatingHalfStar from '~/components/base/icons/RatingHalfStarIcon.vue'
+import RatingEmptyStar from "@components/base/icons/RatingEmptyStarIcon.vue";
+import RatingFullStar from "@components/base/icons/RatingFullStarIcon.vue";
+import RatingHalfStar from "@components/base/icons/RatingHalfStarIcon.vue";
 
 const props = defineProps({
   course: {
     type: Object,
     required: true,
   },
-})
+});
 
-const authStore = useAuthStore()
-const savedTeacherStore = useSavedTeacher()
-const { is } = useGlobalStore()
+const authStore = useAuthStore();
+const savedTeacherStore = useSavedTeacher();
+const {is} = useGlobalStore();
 
 const studentId = computed(() => {
-  return authStore.getStudentProfileId
-})
+  return authStore.getStudentProfileId;
+});
 
 const emit = defineEmits<{
-  (e: 'book', teacherId: number, lessonId: number): void
-}>()
+  (e: "book", teacherId: number, lessonId: number): void;
+}>();
 
 function handleBook() {
-  emit('book', props.course.teacher.id, props.course.id)
+  emit("book", props.course.teacher.id, props.course.id);
 }
 
-const saveTeacherIds = computed(() => savedTeacherStore.getFavouriteTeacherIds)
+const saveTeacherIds = computed(() => savedTeacherStore.getFavouriteTeacherIds);
 
 const isSaved = computed(() => {
   return (
     saveTeacherIds.value?.some(
-      (item: number) => item == props.course?.teacherId
+      (item: number) => item == props.course?.teacherId,
     ) ?? false
-  )
-})
+  );
+});
 
 // Education computed properties
 const displayedEducations = computed(() =>
-  (props.course?.teacher?.education || []).slice(0, 4)
-)
+  (props.course?.teacher?.education || []).slice(0, 4),
+);
 
 const hasMoreEducations = computed(
-  () => (props.course?.teacher?.education || []).length > 4
-)
+  () => (props.course?.teacher?.education || []).length > 4,
+);
 
 const remainingEducations = computed(() =>
-  (props.course?.teacher?.education || []).slice(4)
-)
+  (props.course?.teacher?.education || []).slice(4),
+);
 
 const remainingEducationNames = computed(() =>
-  remainingEducations.value.map((item) => item.degree).join(', ')
-)
+  remainingEducations.value.map((item) => item.degree).join(", "),
+);
 
 // Background colors for education items
 const educationColors = [
-  '#F7F3D1', // Light yellow
-  '#D1E9F7', // Light blue
-  '#E8F5E8', // Light green
-  '#F5E8F5', // Light purple
-]
+  "#F7F3D1", // Light yellow
+  "#D1E9F7", // Light blue
+  "#E8F5E8", // Light green
+  "#F5E8F5", // Light purple
+];
 
 const displayedDisciplines = computed(() =>
-  (props.course?.teacher?.teacherDisciplines || []).slice(0, 4)
-)
+  (props.course?.teacher?.teacherDisciplines || []).slice(0, 4),
+);
 
 const hasMoreDisciplines = computed(
-  () => (props.course?.teacher?.teacherDisciplines || []).length > 4
-)
+  () => (props.course?.teacher?.teacherDisciplines || []).length > 4,
+);
 
 const remainingDisciplines = computed(() =>
-  (props.course?.teacher?.teacherDisciplines || []).slice(4)
-)
+  (props.course?.teacher?.teacherDisciplines || []).slice(4),
+);
 
 const remainingDisciplineNames = computed(() =>
-  remainingDisciplines.value.map((item) => item?.discipline?.name).join(', ')
-)
+  remainingDisciplines.value.map((item) => item?.discipline?.name).join(", "),
+);
 
 const handleAddRemove = async (teacherId: number) => {
   try {
     if (!studentId.value) {
-      const route = useRoute()
-      const fullPath = route.fullPath
-      return await navigateTo(`/login?redirect=${encodeURIComponent(fullPath)}`)
+      const route = useRoute();
+      const fullPath = route.fullPath;
+      return await navigateTo(
+        `/login?redirect=${encodeURIComponent(fullPath)}`,
+      );
     }
 
     if (!isSaved.value) {
-      await savedTeacherStore.addFavouriteTeacher(teacherId)
+      await savedTeacherStore.addFavouriteTeacher(teacherId);
     } else {
-      await savedTeacherStore.removeFavouriteTeacher(teacherId)
+      await savedTeacherStore.removeFavouriteTeacher(teacherId);
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 </script>
 
 <template>
@@ -117,9 +119,9 @@ const handleAddRemove = async (teacherId: number) => {
             <h2 class="title">
               {{
                 course?.teacher?.firstName +
-                ' ' +
+                " " +
                 course?.teacher?.lastName[0] +
-                '.'
+                "."
               }}
             </h2>
             <BaseGlobalIcon class="text-blue-500" component-name="BadgeIcon" />
@@ -171,9 +173,9 @@ const handleAddRemove = async (teacherId: number) => {
             <h2 class="title">
               {{
                 course?.teacher?.firstName +
-                ' ' +
+                " " +
                 course?.teacher?.lastName[0] +
-                '.'
+                "."
               }}
             </h2>
             <BaseGlobalIcon class="text-blue-500" component-name="BadgeIcon" />
@@ -216,7 +218,7 @@ const handleAddRemove = async (teacherId: number) => {
               v-for="(education, index) in displayedEducations"
               :key="education?.id"
               class="w-fit flex items-center gap-1 text-xs sm:text-sm text-black rounded-sm px-2 py-1"
-              :style="{ backgroundColor: educationColors[index] }"
+              :style="{backgroundColor: educationColors[index]}"
             >
               <svg
                 width="10"
@@ -337,9 +339,9 @@ const handleAddRemove = async (teacherId: number) => {
           <p class="paragraph_secondary max-w-[485px] mt-4">
             {{
               course?.teacher?.profileSummary
-                ?.split(' ')
+                ?.split(" ")
                 .slice(0, 15)
-                .join(' ')
+                .join(" ")
             }}<span
               v-if="course?.teacher?.profileSummary?.split(' ').length > 15"
               >...</span
@@ -379,7 +381,7 @@ const handleAddRemove = async (teacherId: number) => {
         :disabled="is('removeFavouriteTeacher') || is('addFavouriteTeacher')"
         @click="handleAddRemove(props.course?.teacherId)"
       >
-        {{ isSaved ? 'Remove from favorite' : 'Add to favorite' }}</Button
+        {{ isSaved ? "Remove from favorite" : "Add to favorite" }}</Button
       >
     </div>
   </div>

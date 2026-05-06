@@ -1,29 +1,29 @@
 <script setup>
-import Button from 'primevue/button'
-import { computed } from 'vue'
-import { usePageBuilderStore } from '~/layers/page-builder/stores/pageBuilder'
+import Button from "primevue/button";
+import {computed} from "vue";
+import {usePageBuilderStore} from "@layers/page-builder/stores/pageBuilder";
 import {
   headingClassMap,
   paragraphBaseClass,
-} from '../../../utils/headingClasses'
+} from "../../../utils/headingClasses";
 
 const props = defineProps({
   id: {
     type: String,
-    default: '',
+    default: "",
   },
   // Section heading
   sectionTitle: {
     type: String,
-    default: '',
+    default: "",
   },
   sectionTitleTag: {
     type: String,
-    default: 'h2',
+    default: "h2",
   },
   sectionDescription: {
     type: String,
-    default: '',
+    default: "",
   },
   // Grid items array
   items: {
@@ -37,112 +37,112 @@ const props = defineProps({
   },
   buttonAlignment: {
     type: String,
-    default: 'left',
+    default: "left",
   },
   buttonSpacing: {
     type: String,
-    default: '12px',
+    default: "12px",
   },
   isEditing: {
     type: Boolean,
     default: false,
   },
-})
+});
 
-const emit = defineEmits(['update:props'])
+const emit = defineEmits(["update:props"]);
 
-const store = usePageBuilderStore()
-const isPreview = computed(() => store.isPreview)
+const store = usePageBuilderStore();
+const isPreview = computed(() => store.isPreview);
 
 // Handle content updates
 const updateItemTitle = (index, event) => {
-  if (!props.items[index]) return
-  const updatedItems = [...props.items]
+  if (!props.items[index]) return;
+  const updatedItems = [...props.items];
   updatedItems[index] = {
     ...updatedItems[index],
     title: event.target.innerText,
-  }
-  emit('update:props', { items: updatedItems })
-}
+  };
+  emit("update:props", {items: updatedItems});
+};
 
 const handleLinkClick = (item) => {
-  if (props.isEditing) return
-  if (!isPreview.value) return
+  if (props.isEditing) return;
+  if (!isPreview.value) return;
 
   if (item.link) {
-    if (item.linkTarget === '_blank') {
-      window.open(item.link, '_blank')
+    if (item.linkTarget === "_blank") {
+      window.open(item.link, "_blank");
     } else {
-      window.location.href = item.link
+      window.location.href = item.link;
     }
   }
-}
+};
 
 // Handle image error
 const handleImageError = () => {
-  console.warn('Image failed to load')
-}
+  console.warn("Image failed to load");
+};
 
 // Split paragraph text into multiple paragraphs by newline
 const getParagraphs = (text) => {
-  if (!text) return []
+  if (!text) return [];
   return text
-    .split('\n')
+    .split("\n")
     .map((t) => t.trim())
-    .filter((t) => t.length > 0)
-}
+    .filter((t) => t.length > 0);
+};
 
 // Heading helpers
 const hasSectionTitle = computed(
-  () => props.sectionTitle && props.sectionTitle.trim().length > 0
-)
+  () => props.sectionTitle && props.sectionTitle.trim().length > 0,
+);
 const hasSectionDescription = computed(
-  () => props.sectionDescription && props.sectionDescription.trim().length > 0
-)
+  () => props.sectionDescription && props.sectionDescription.trim().length > 0,
+);
 
 const updateSectionTitle = (event) => {
-  emit('update:props', { sectionTitle: event.target.innerText })
-}
+  emit("update:props", {sectionTitle: event.target.innerText});
+};
 
 const sectionHeadingClass = computed(
-  () => headingClassMap[props.sectionTitleTag] || headingClassMap.h2
-)
+  () => headingClassMap[props.sectionTitleTag] || headingClassMap.h2,
+);
 
 // Button functionality
-const hasButtons = computed(() => props.buttons && props.buttons.length > 0)
+const hasButtons = computed(() => props.buttons && props.buttons.length > 0);
 
 const buttonContainerStyles = computed(() => ({
   textAlign: props.buttonAlignment,
-  display: 'flex',
-  flexWrap: 'wrap',
+  display: "flex",
+  flexWrap: "wrap",
   gap: props.buttonSpacing,
   justifyContent:
-    props.buttonAlignment === 'center'
-      ? 'center'
-      : props.buttonAlignment === 'right'
-        ? 'flex-end'
-        : 'flex-start',
-}))
+    props.buttonAlignment === "center"
+      ? "center"
+      : props.buttonAlignment === "right"
+        ? "flex-end"
+        : "flex-start",
+}));
 
 const handleButtonClick = (button) => {
-  if (!isPreview.value) return
+  if (!isPreview.value) return;
 
   if (button.link) {
-    if (button.target === '_blank') {
-      window.open(button.link, '_blank')
+    if (button.target === "_blank") {
+      window.open(button.link, "_blank");
     } else {
-      window.location.href = button.link
+      window.location.href = button.link;
     }
   }
-}
+};
 
 const getButtonHoverClasses = (button) => {
-  const variant = button.variant || 'filled'
-  if (variant === 'filled') return 'hover:brightness-95'
-  if (variant === 'outlined')
-    return 'hover:!text-black hover:!ring-1 hover:!ring-black'
-  return 'hover:underline hover:!text-black'
-}
+  const variant = button.variant || "filled";
+  if (variant === "filled") return "hover:brightness-95";
+  if (variant === "outlined")
+    return "hover:!text-black hover:!ring-1 hover:!ring-black";
+  return "hover:underline hover:!text-black";
+};
 </script>
 
 <template>
@@ -165,7 +165,7 @@ const getButtonHoverClasses = (button) => {
       :contenteditable="isEditing"
       @blur="updateSectionTitle"
     >
-      {{ sectionTitle || (isEditing ? 'Enter section title...' : '') }}
+      {{ sectionTitle || (isEditing ? "Enter section title..." : "") }}
     </component>
 
     <div
@@ -190,7 +190,7 @@ const getButtonHoverClasses = (button) => {
       </template>
       <p v-else class="text-gray-400 italic">
         {{
-          isEditing ? 'Enter a short description for this grid section...' : ''
+          isEditing ? "Enter a short description for this grid section..." : ""
         }}
       </p>
     </div>
@@ -255,7 +255,7 @@ const getButtonHoverClasses = (button) => {
           :contenteditable="isEditing"
           @blur="updateItemTitle(index, $event)"
         >
-          {{ item.title || (isEditing ? 'Enter title...' : '') }}
+          {{ item.title || (isEditing ? "Enter title..." : "") }}
         </h3>
 
         <!-- Paragraphs -->
@@ -280,7 +280,7 @@ const getButtonHoverClasses = (button) => {
             </p>
           </div>
           <p v-else class="text-gray-400 italic">
-            {{ isEditing ? 'Enter paragraph text...' : '' }}
+            {{ isEditing ? "Enter paragraph text..." : "" }}
           </p>
         </div>
 
@@ -296,7 +296,7 @@ const getButtonHoverClasses = (button) => {
             style="text-underline-offset: 7px; text-decoration: underline"
             @click.prevent="handleLinkClick(item)"
           >
-            {{ item.linkText || 'Read more' }}
+            {{ item.linkText || "Read more" }}
           </a>
         </div>
       </div>

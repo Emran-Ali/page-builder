@@ -1,81 +1,81 @@
 <script setup>
-import { computed } from 'vue'
-import Button from 'primevue/button'
+import {computed} from "vue";
+import Button from "primevue/button";
 import {
   headingClassMap,
   paragraphBaseClass,
-} from '../../../utils/headingClasses'
-import { usePageBuilderStore } from '~/layers/page-builder/stores/pageBuilder'
+} from "../../../utils/headingClasses";
+import {usePageBuilderStore} from "@layers/page-builder/stores/pageBuilder";
 
 const props = defineProps({
   id: {
     type: String,
-    default: '',
+    default: "",
   },
   // Title properties
   title: {
     type: String,
-    default: '',
+    default: "",
   },
   titleTag: {
     type: String,
-    default: 'h2',
+    default: "h2",
   },
   titleFontSize: {
     type: String,
-    default: '32px',
+    default: "32px",
   },
   titleFontWeight: {
     type: String,
-    default: 'bold',
+    default: "bold",
   },
   titleColor: {
     type: String,
-    default: '#000000',
+    default: "#000000",
   },
   titleAlign: {
     type: String,
-    default: 'left',
+    default: "left",
   },
   titleMarginBottom: {
     type: String,
-    default: '16px',
+    default: "16px",
   },
 
   // Paragraph properties
   paragraph: {
     type: String,
-    default: '',
+    default: "",
   },
   paragraphAlign: {
     type: String,
-    default: 'left',
+    default: "left",
   },
   paragraphFontSize: {
     type: String,
-    default: '14px',
+    default: "14px",
   },
 
   // Media properties
   mediaType: {
     type: String,
-    default: 'image', // 'image' or 'video'
+    default: "image", // 'image' or 'video'
   },
   imageSrc: {
     type: String,
-    default: '',
+    default: "",
   },
   imageAlt: {
     type: String,
-    default: 'Image',
+    default: "Image",
   },
   videoSrc: {
     type: String,
-    default: '',
+    default: "",
   },
   videoAlt: {
     type: String,
-    default: '',
+    default: "",
   },
 
   // Button properties
@@ -85,141 +85,141 @@ const props = defineProps({
   },
   buttonAlignment: {
     type: String,
-    default: 'left',
+    default: "left",
   },
   buttonSpacing: {
     type: String,
-    default: '12px',
+    default: "12px",
   },
 
   // Responsive breakpoint
   mobileBreakpoint: {
     type: String,
-    default: '768px',
+    default: "768px",
   },
 
   isEditing: {
     type: Boolean,
     default: false,
   },
-})
+});
 
-const emit = defineEmits(['update:props'])
+const emit = defineEmits(["update:props"]);
 
-const store = usePageBuilderStore()
-const isPreview = computed(() => store.isPreview)
+const store = usePageBuilderStore();
+const isPreview = computed(() => store.isPreview);
 
 const buttonContainerStyles = computed(() => ({
   textAlign: props.buttonAlignment,
-  display: 'flex',
-  flexWrap: 'wrap',
+  display: "flex",
+  flexWrap: "wrap",
   gap: props.buttonSpacing,
   justifyContent:
-    props.buttonAlignment === 'center'
-      ? 'center'
-      : props.buttonAlignment === 'right'
-        ? 'flex-end'
-        : 'flex-start',
-}))
+    props.buttonAlignment === "center"
+      ? "center"
+      : props.buttonAlignment === "right"
+        ? "flex-end"
+        : "flex-start",
+}));
 
 // Helpers
 const getParagraphs = (text) => {
-  if (!text) return []
+  if (!text) return [];
   return text
-    .split('\n')
+    .split("\n")
     .map((t) => t.trim())
-    .filter((t) => t.length > 0)
-}
+    .filter((t) => t.length > 0);
+};
 
 // Handle content updates
 const updateTitle = (event) => {
-  emit('update:props', { title: event.target.innerText })
-}
+  emit("update:props", {title: event.target.innerText});
+};
 
 const updateParagraph = (event) => {
-  emit('update:props', { paragraph: event.target.innerText })
-}
+  emit("update:props", {paragraph: event.target.innerText});
+};
 
 const handleButtonClick = (button) => {
-  if (!isPreview.value) return
+  if (!isPreview.value) return;
 
   if (button.link) {
-    if (button.target === '_blank') {
-      window.open(button.link, '_blank')
+    if (button.target === "_blank") {
+      window.open(button.link, "_blank");
     } else {
-      window.location.href = button.link
+      window.location.href = button.link;
     }
   }
-}
+};
 
 // Handle image error
 const handleImageError = () => {
-  console.warn('Image failed to load:', props.imageSrc)
+  console.warn("Image failed to load:", props.imageSrc);
   // You can set a fallback image here if needed
-}
+};
 
 // Convert YouTube URL to embed URL
 const getYouTubeEmbedUrl = (url) => {
-  if (!url) return ''
+  if (!url) return "";
 
   // Handle various YouTube URL formats
   const patterns = [
     /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
     /youtube\.com\/watch\?.*v=([^&\n?#]+)/,
-  ]
+  ];
 
   for (const pattern of patterns) {
-    const match = url.match(pattern)
+    const match = url.match(pattern);
     if (match && match[1]) {
-      return `https://www.youtube.com/embed/${match[1]}`
+      return `https://www.youtube.com/embed/${match[1]}`;
     }
   }
 
   // If it's already an embed URL, return as is
-  if (url.includes('youtube.com/embed/')) {
-    return url
+  if (url.includes("youtube.com/embed/")) {
+    return url;
   }
 
-  return url
-}
+  return url;
+};
 
 // Check if content exists
-const hasTitle = computed(() => props.title && props.title.trim().length > 0)
+const hasTitle = computed(() => props.title && props.title.trim().length > 0);
 const hasParagraph = computed(
-  () => props.paragraph && props.paragraph.trim().length > 0
-)
+  () => props.paragraph && props.paragraph.trim().length > 0,
+);
 const hasImage = computed(
   () =>
-    props.mediaType === 'image' &&
+    props.mediaType === "image" &&
     props.imageSrc &&
-    props.imageSrc.trim().length > 0
-)
+    props.imageSrc.trim().length > 0,
+);
 const hasVideo = computed(
   () =>
-    props.mediaType === 'video' &&
+    props.mediaType === "video" &&
     props.videoSrc &&
-    props.videoSrc.trim().length > 0
-)
-const hasMedia = computed(() => hasImage.value || hasVideo.value)
+    props.videoSrc.trim().length > 0,
+);
+const hasMedia = computed(() => hasImage.value || hasVideo.value);
 const videoEmbedUrl = computed(() => {
   if (hasVideo.value && props.videoSrc) {
-    return getYouTubeEmbedUrl(props.videoSrc)
+    return getYouTubeEmbedUrl(props.videoSrc);
   }
-  return ''
-})
-const hasButtons = computed(() => props.buttons && props.buttons.length > 0)
+  return "";
+});
+const hasButtons = computed(() => props.buttons && props.buttons.length > 0);
 
 const headingClass = computed(
-  () => headingClassMap[props.titleTag] || headingClassMap.h2
-)
+  () => headingClassMap[props.titleTag] || headingClassMap.h2,
+);
 
 const getButtonHoverClasses = (button) => {
-  const variant = button.variant || 'filled'
-  if (variant === 'filled') return 'hover:brightness-95'
-  if (variant === 'outlined')
-    return 'hover:!text-black hover:!ring-1 hover:!ring-black'
-  return 'hover:underline hover:!text-black'
-}
+  const variant = button.variant || "filled";
+  if (variant === "filled") return "hover:brightness-95";
+  if (variant === "outlined")
+    return "hover:!text-black hover:!ring-1 hover:!ring-black";
+  return "hover:underline hover:!text-black";
+};
 </script>
 
 <template>
@@ -238,7 +238,7 @@ const getButtonHoverClasses = (button) => {
         :is="titleTag"
         v-if="hasTitle || isEditing"
         :contenteditable="isEditing"
-        :style="{ textAlign: titleAlign, marginBottom: titleMarginBottom }"
+        :style="{textAlign: titleAlign, marginBottom: titleMarginBottom}"
         :class="[
           'outline-none',
           headingClass,
@@ -252,14 +252,14 @@ const getButtonHoverClasses = (button) => {
         ]"
         @blur="updateTitle"
       >
-        {{ title || (isEditing ? 'Enter title...' : '') }}
+        {{ title || (isEditing ? "Enter title..." : "") }}
       </component>
 
       <!-- Paragraph -->
       <div
         v-if="hasParagraph || isEditing"
         class="outline-none"
-        :style="{ textAlign: paragraphAlign, fontSize: paragraphFontSize }"
+        :style="{textAlign: paragraphAlign, fontSize: paragraphFontSize}"
         :class="{
           'border border-dashed border-gray-300 min-h-[1em] p-1 rounded':
             isEditing,
@@ -275,13 +275,13 @@ const getButtonHoverClasses = (button) => {
             v-for="(para, idx) in getParagraphs(paragraph)"
             :key="idx"
             :class="paragraphBaseClass"
-            :style="{ textAlign: paragraphAlign, fontSize: paragraphFontSize }"
+            :style="{textAlign: paragraphAlign, fontSize: paragraphFontSize}"
           >
             {{ para }}
           </p>
         </template>
         <p v-else class="text-gray-400 italic">
-          {{ isEditing ? 'Enter paragraph text...' : '' }}
+          {{ isEditing ? "Enter paragraph text..." : "" }}
         </p>
       </div>
 
@@ -305,7 +305,13 @@ const getButtonHoverClasses = (button) => {
             :src="videoEmbedUrl"
             class="w-full h-full"
             frameborder="0"
-            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="
+              accelerometer;
+              clipboard-write;
+              encrypted-media;
+              gyroscope;
+              picture-in-picture;
+            "
             allowfullscreen
           ></iframe>
         </div>
@@ -315,7 +321,7 @@ const getButtonHoverClasses = (button) => {
           v-else-if="isEditing"
           class="flex items-center justify-center bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg min-h-[200px] text-gray-500 italic w-full"
         >
-          <p>No {{ mediaType === 'video' ? 'video' : 'image' }} configured</p>
+          <p>No {{ mediaType === "video" ? "video" : "image" }} configured</p>
         </div>
       </div>
       <!-- Buttons -->

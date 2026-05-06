@@ -1,30 +1,30 @@
 <script setup>
-import { computed } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import TableProperties from '../BuilderComponents/Table/TableProperties.vue'
-import DataTableProperties from '../BuilderComponents/DataTable/DataTableProperties.vue'
-import CardProperties from '../BuilderComponents/Card/CardProperties.vue'
-import GridProperties from '../BuilderComponents/Grid/GridProperties.vue'
-import TextProperties from '../BuilderComponents/Text/TextProperties.vue'
-import ImageProperties from '../BuilderComponents/Image/ImageProperties.vue'
-import ButtonProperties from '../BuilderComponents/Button/ButtonProperties.vue'
-import AccordionProperties from '../BuilderComponents/Accordion/AccordionProperties.vue'
-import TextImageProperties from '../BuilderComponents/TextImage/TextImageProperties.vue'
-import TestimonialProperties from '../BuilderComponents/Testimonial/TestimonialProperties.vue'
-import GridBlockProperties from '../BuilderComponents/GridBlock/GridBlockProperties.vue'
-import CTAProperties from '../BuilderComponents/CTA/CTAProperties.vue'
-import ListItemProperties from '../BuilderComponents/ListItem/ListItemProperties.vue'
-import MapBlockProperties from '../BuilderComponents/MapBlock/MapBlockProperties.vue'
-import TeacherListProperties from '../BuilderComponents/TeacherList/TeacherListProperties.vue'
-import OfflineTeacherListProperties from '../BuilderComponents/OfflineTeacherList/OfflineTeacherListProperties.vue'
-import SearchOfflineTeacherProperties from '../BuilderComponents/SearchOfflineTeacher/SearchOfflineTeacherProperties.vue'
-import TeacherFinderBlockProperties from '../BuilderComponents/TeacherFinderBlock/TeacherFinderBlockProperties.vue'
-import RTEProperties from '../BuilderComponents/RTF/RTEProperties.vue'
-import ComponentActions from './ComponentActions.vue'
+import {computed} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import TableProperties from "../BuilderComponents/Table/TableProperties.vue";
+import DataTableProperties from "../BuilderComponents/DataTable/DataTableProperties.vue";
+import CardProperties from "../BuilderComponents/Card/CardProperties.vue";
+import GridProperties from "../BuilderComponents/Grid/GridProperties.vue";
+import TextProperties from "../BuilderComponents/Text/TextProperties.vue";
+import ImageProperties from "../BuilderComponents/Image/ImageProperties.vue";
+import ButtonProperties from "../BuilderComponents/Button/ButtonProperties.vue";
+import AccordionProperties from "../BuilderComponents/Accordion/AccordionProperties.vue";
+import TextImageProperties from "../BuilderComponents/TextImage/TextImageProperties.vue";
+import TestimonialProperties from "../BuilderComponents/Testimonial/TestimonialProperties.vue";
+import GridBlockProperties from "../BuilderComponents/GridBlock/GridBlockProperties.vue";
+import CTAProperties from "../BuilderComponents/CTA/CTAProperties.vue";
+import ListItemProperties from "../BuilderComponents/ListItem/ListItemProperties.vue";
+import MapBlockProperties from "../BuilderComponents/MapBlock/MapBlockProperties.vue";
+import TeacherListProperties from "../BuilderComponents/TeacherList/TeacherListProperties.vue";
+import OfflineTeacherListProperties from "../BuilderComponents/OfflineTeacherList/OfflineTeacherListProperties.vue";
+import SearchOfflineTeacherProperties from "../BuilderComponents/SearchOfflineTeacher/SearchOfflineTeacherProperties.vue";
+import TeacherFinderBlockProperties from "../BuilderComponents/TeacherFinderBlock/TeacherFinderBlockProperties.vue";
+import RTEProperties from "../BuilderComponents/RTF/RTEProperties.vue";
+import ComponentActions from "./ComponentActions.vue";
 
-const store = usePageBuilderStore()
+const store = usePageBuilderStore();
 
-const selectedComponent = computed(() => store.getSelectedComponent)
+const selectedComponent = computed(() => store.getSelectedComponent);
 
 // Component registry for dynamic loading
 const componentPropertyMap = {
@@ -47,12 +47,12 @@ const componentPropertyMap = {
   searchofflineteacher: SearchOfflineTeacherProperties,
   teacherfinderblock: TeacherFinderBlockProperties,
   rte: RTEProperties,
-}
+};
 
 // Get the appropriate property component for the selected component type
 const getPropertyComponent = (componentType) => {
-  return componentPropertyMap[componentType] || null
-}
+  return componentPropertyMap[componentType] || null;
+};
 </script>
 
 <template>
@@ -64,7 +64,7 @@ const getPropertyComponent = (componentType) => {
         {{
           selectedComponent
             ? `Edit ${selectedComponent.type}`
-            : 'Select a component'
+            : "Select a component"
         }}
       </p>
     </div>

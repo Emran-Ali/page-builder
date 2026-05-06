@@ -1,136 +1,136 @@
 <script setup>
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import Slider from 'primevue/slider'
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import Slider from "primevue/slider";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const buttonProps = ref({})
+const store = usePageBuilderStore();
+const buttonProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'button') {
-      buttonProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "button") {
+      buttonProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Update function with real-time updates
 const updateButtonProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, buttonProps.value)
+    store.updateComponentProps(props.component.id, buttonProps.value);
   }
-}
+};
 
 // Set button variant function
 const setButtonVariant = (variant) => {
-  buttonProps.value.variant = variant
-  updateButtonProps()
-}
+  buttonProps.value.variant = variant;
+  updateButtonProps();
+};
 
 // Set button size function
 const setButtonSize = (size) => {
-  buttonProps.value.size = size
-  updateButtonProps()
-}
+  buttonProps.value.size = size;
+  updateButtonProps();
+};
 
 // Set button alignment function
 const setButtonAlignment = (alignment) => {
-  buttonProps.value.alignment = alignment
-  updateButtonProps()
-}
+  buttonProps.value.alignment = alignment;
+  updateButtonProps();
+};
 
 // Set button severity function
 const setButtonSeverity = (severity) => {
-  buttonProps.value.severity = severity
-  updateButtonProps()
-}
+  buttonProps.value.severity = severity;
+  updateButtonProps();
+};
 
 // Set button target function
 const setButtonTarget = (target) => {
-  buttonProps.value.target = target
-  updateButtonProps()
-}
+  buttonProps.value.target = target;
+  updateButtonProps();
+};
 
 // Options for dropdowns
 const severityOptions = [
-  { label: 'Primary', value: 'primary' },
-  { label: 'Secondary', value: 'secondary' },
-  { label: 'Success', value: 'success' },
-  { label: 'Info', value: 'info' },
-  { label: 'Warn', value: 'warn' },
-  { label: 'Help', value: 'help' },
-  { label: 'Danger', value: 'danger' },
-  { label: 'Contrast', value: 'contrast' },
-]
+  {label: "Primary", value: "primary"},
+  {label: "Secondary", value: "secondary"},
+  {label: "Success", value: "success"},
+  {label: "Info", value: "info"},
+  {label: "Warn", value: "warn"},
+  {label: "Help", value: "help"},
+  {label: "Danger", value: "danger"},
+  {label: "Contrast", value: "contrast"},
+];
 
 const variantOptions = [
-  { label: 'Filled', value: 'filled' },
-  { label: 'Outlined', value: 'outlined' },
-  { label: 'Text', value: 'text' },
-]
+  {label: "Filled", value: "filled"},
+  {label: "Outlined", value: "outlined"},
+  {label: "Text", value: "text"},
+];
 
 const sizeOptions = [
-  { label: 'Small', value: 'small' },
-  { label: 'Normal', value: 'normal' },
-  { label: 'Large', value: 'large' },
-]
+  {label: "Small", value: "small"},
+  {label: "Normal", value: "normal"},
+  {label: "Large", value: "large"},
+];
 
 const targetOptions = [
-  { label: 'Same Window', value: '_self' },
-  { label: 'New Window', value: '_blank' },
-]
+  {label: "Same Window", value: "_self"},
+  {label: "New Window", value: "_blank"},
+];
 
 const alignmentOptions = [
-  { label: 'Left', value: 'left' },
-  { label: 'Center', value: 'center' },
-  { label: 'Right', value: 'right' },
-]
+  {label: "Left", value: "left"},
+  {label: "Center", value: "center"},
+  {label: "Right", value: "right"},
+];
 
 // Computed values for sliders
 const marginHorizontalValue = computed({
   get: () =>
-    parseInt(buttonProps.value.marginHorizontal?.replace('px', '') || '0'),
+    parseInt(buttonProps.value.marginHorizontal?.replace("px", "") || "0"),
   set: (value) => {
-    buttonProps.value.marginHorizontal = `${value}px`
-    updateButtonProps()
+    buttonProps.value.marginHorizontal = `${value}px`;
+    updateButtonProps();
   },
-})
+});
 
 const marginVerticalValue = computed({
   get: () =>
-    parseInt(buttonProps.value.marginVertical?.replace('px', '') || '0'),
+    parseInt(buttonProps.value.marginVertical?.replace("px", "") || "0"),
   set: (value) => {
-    buttonProps.value.marginVertical = `${value}px`
-    updateButtonProps()
+    buttonProps.value.marginVertical = `${value}px`;
+    updateButtonProps();
   },
-})
+});
 
 const paddingHorizontalValue = computed({
   get: () =>
-    parseInt(buttonProps.value.paddingHorizontal?.replace('px', '') || '0'),
+    parseInt(buttonProps.value.paddingHorizontal?.replace("px", "") || "0"),
   set: (value) => {
-    buttonProps.value.paddingHorizontal = `${value}px`
-    updateButtonProps()
+    buttonProps.value.paddingHorizontal = `${value}px`;
+    updateButtonProps();
   },
-})
+});
 
 const paddingVerticalValue = computed({
   get: () =>
-    parseInt(buttonProps.value.paddingVertical?.replace('px', '') || '0'),
+    parseInt(buttonProps.value.paddingVertical?.replace("px", "") || "0"),
   set: (value) => {
-    buttonProps.value.paddingVertical = `${value}px`
-    updateButtonProps()
+    buttonProps.value.paddingVertical = `${value}px`;
+    updateButtonProps();
   },
-})
+});
 </script>
 
 <template>

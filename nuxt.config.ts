@@ -1,11 +1,13 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  alias: {
+    "@": ".",
+    "@utils": "./utils/",
+    "@components": "./components/",
+    "@stores": "./stores/",
+  },
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  css: [
-    "primeicons/primeicons.css",
-    "~/assets/tailwind.css"
-  ],
+  css: ["primeicons/primeicons.css"],
   modules: [
     "@pinia/nuxt",
     "@nuxtjs/tailwindcss",
@@ -28,6 +30,17 @@ export default defineNuxtConfig({
     public: {
       googleClientId: process.env.GOOGLE_CLIENT_ID,
       googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL,
-    }
-  }
+      BACKEND_URL: process.env.BACKEND_URL || "http://localhost:3000/",
+    },
+  },
+  primevue: {
+    components: {
+      prefix: "Prime",
+    },
+    directives: {
+      prefix: "v",
+    },
+    toastDuration: 3000,
+    toastSeverity: "info",
+  },
 });

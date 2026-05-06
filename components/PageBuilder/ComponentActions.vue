@@ -1,26 +1,26 @@
 <script setup>
-import { usePageBuilderStore } from '~/stores/pageBuilder'
+import {usePageBuilderStore} from "@stores/pageBuilder";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
+const store = usePageBuilderStore();
 
 const duplicateComponent = () => {
   if (props.component) {
-    store.duplicateComponent(props.component.id)
+    store.duplicateComponent(props.component.id);
   }
-}
+};
 
 const deleteComponent = () => {
   if (props.component) {
-    store.deleteComponent(props.component.id)
+    store.deleteComponent(props.component.id);
   }
-}
+};
 </script>
 
 <template>

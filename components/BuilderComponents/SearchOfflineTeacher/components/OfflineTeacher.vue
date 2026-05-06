@@ -1,52 +1,52 @@
 <script setup lang="ts">
-import BookAppointment from '~/components/views/OfflineLesson/BookAppointment.vue'
-import { useSavedTeacher } from '~/pinia/student-store/saved-teacher'
-import OfflineCourseCardList from './OfflineCourseCardList.vue'
-import OfflineCourseCardSkeletons from './OfflineCourseCardSkeletons.vue'
-import OfflineLessonFilter from './OfflineLessonFilter.vue'
-import SelectZip from './SelectZip.vue'
+import BookAppointment from "@components/views/OfflineLesson/BookAppointment.vue";
+import {useSavedTeacher} from "@pinia/student-store/saved-teacher";
+import OfflineCourseCardList from "./OfflineCourseCardList.vue";
+import OfflineCourseCardSkeletons from "./OfflineCourseCardSkeletons.vue";
+import OfflineLessonFilter from "./OfflineLessonFilter.vue";
+import SelectZip from "./SelectZip.vue";
 
 defineProps({
   initialArea: {
     type: String,
-    default: 'California',
+    default: "California",
   },
-})
+});
 
-const showSubmitForm = ref(false)
+const showSubmitForm = ref(false);
 
-const isZipAvailable = ref(false)
-const selectedZipCodes = ref<string[]>([])
-const selectedArea = ref('')
-const selectedTeacher = ref<number | null>(null)
-const selectedLesson = ref<number | null>(null)
+const isZipAvailable = ref(false);
+const selectedZipCodes = ref<string[]>([]);
+const selectedArea = ref("");
+const selectedTeacher = ref<number | null>(null);
+const selectedLesson = ref<number | null>(null);
 
-const route = useRoute()
-const router = useRouter()
-const commonStore = useCommonStore()
-const lessonStore = useLessonStore()
-const { is } = useGlobalStore()
-const authStore = useAuthStore()
-const offlineStore = useOfflineAvailabilityStore()
-const saveTeacherStore = useSavedTeacher()
+const route = useRoute();
+const router = useRouter();
+const commonStore = useCommonStore();
+const lessonStore = useLessonStore();
+const {is} = useGlobalStore();
+const authStore = useAuthStore();
+const offlineStore = useOfflineAvailabilityStore();
+const saveTeacherStore = useSavedTeacher();
 
-const disciplines = computed(() => commonStore.disciplines)
-const lessons = computed(() => lessonStore.getOfflineLessons)
-const hasLessons = computed(() => lessons.value && lessons.value.length > 0)
-const studentProfileId = computed(() => authStore.getStudentProfileId)
+const disciplines = computed(() => commonStore.disciplines);
+const lessons = computed(() => lessonStore.getOfflineLessons);
+const hasLessons = computed(() => lessons.value && lessons.value.length > 0);
+const studentProfileId = computed(() => authStore.getStudentProfileId);
 
 const pagination = computed(() => {
-  const metaData = (lessonStore.getMeta as Record<string, any>) || {}
+  const metaData = (lessonStore.getMeta as Record<string, any>) || {};
   return {
     currentPage: metaData.currentPage || 1,
     totalPages: metaData.totalPages || 1,
     hasNextPage: metaData.hasNextPage || false,
     hasPreviousPage: metaData.hasPreviousPage || false,
-  }
-})
+  };
+});
 
 const handleFilterChange = (queryParams: any) => {
-  const { type, ...rest } = queryParams
+  const {type, ...rest} = queryParams;
 
   lessonStore.fetchOfflineLessons({
     page: 1,
@@ -54,57 +54,57 @@ const handleFilterChange = (queryParams: any) => {
     area: selectedArea.value,
     zipCodes: selectedZipCodes.value,
     ...rest,
-  })
-}
+  });
+};
 
 const handlePageChange = (page: any) => {
-  if (page === pagination.value.currentPage) return
-  const queryParams = { ...route.query, page: page }
+  if (page === pagination.value.currentPage) return;
+  const queryParams = {...route.query, page: page};
   router.replace({
     query: queryParams,
-  })
+  });
   lessonStore.fetchOfflineLessons({
     limit: 5,
     area: selectedArea.value,
     zipCodes: selectedZipCodes.value,
     ...queryParams,
-  })
-}
+  });
+};
 
 const searchTutor = async (area: string, zipCodes: string[]) => {
   if (zipCodes.length > 0) {
-    isZipAvailable.value = true
-    selectedArea.value = area
-    selectedZipCodes.value = zipCodes
-    console.log('selected zipcode: ', selectedZipCodes.value, area, zipCodes)
+    isZipAvailable.value = true;
+    selectedArea.value = area;
+    selectedZipCodes.value = zipCodes;
+    console.log("selected zipcode: ", selectedZipCodes.value, area, zipCodes);
 
     lessonStore.fetchOfflineLessons({
       area: selectedArea.value,
       zipCodes: selectedZipCodes.value,
       limit: 5,
       page: 1,
-    })
+    });
   } else {
-    isZipAvailable.value = false
+    isZipAvailable.value = false;
   }
-}
+};
 
 const bookTeacher = (teacherId?: number | Event, lessonId?: number) => {
-  if (typeof teacherId === 'number') {
-    selectedTeacher.value = teacherId
+  if (typeof teacherId === "number") {
+    selectedTeacher.value = teacherId;
   } else {
-    selectedTeacher.value = null
+    selectedTeacher.value = null;
   }
-  selectedLesson.value = lessonId || null
-  showSubmitForm.value = true
-}
+  selectedLesson.value = lessonId || null;
+  showSubmitForm.value = true;
+};
 
 const handleSubmitBooking = async (
   contactNumber: string,
   message: string,
   email: string,
   name: string,
-  disciplines: string[]
+  disciplines: string[],
 ) => {
   const data = {
     area: selectedArea.value,
@@ -117,23 +117,23 @@ const handleSubmitBooking = async (
     name,
     disciplines,
     studentId: studentProfileId.value || null,
-  }
+  };
 
-  console.log('data', data)
+  console.log("data", data);
   try {
-    await offlineStore.bookAppointment(data)
-    showSubmitForm.value = false
+    await offlineStore.bookAppointment(data);
+    showSubmitForm.value = false;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 onMounted(async () => {
-  await commonStore.fetchAllDisciplines()
+  await commonStore.fetchAllDisciplines();
   if (studentProfileId.value) {
-    await saveTeacherStore.fetchFavouriteTeachers()
+    await saveTeacherStore.fetchFavouriteTeachers();
   }
-})
+});
 </script>
 
 <template>
@@ -206,7 +206,7 @@ onMounted(async () => {
     v-model:visible="showSubmitForm"
     modal
     header="Submit In-person Lesson Query"
-    :style="{ width: '40rem' }"
+    :style="{width: '40rem'}"
   >
     <BookAppointment @book-appointment="handleSubmitBooking" />
   </Dialog>

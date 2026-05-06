@@ -1,22 +1,22 @@
 <script setup>
-import Button from 'primevue/button'
-import { computed, ref, watch } from 'vue'
-import RatingEmptyStarIcon from '~/components/base/icons/RatingEmptyStarIcon.vue'
-import RatingFullStarIcon from '~/components/base/icons/RatingFullStarIcon.vue'
-import RatingHalfStarIcon from '~/components/base/icons/RatingHalfStarIcon.vue'
-import VarifiedTickMarkIcon from '~/components/base/icons/VarifiedTickMarkIcon.vue'
-import QueryOfflineTeacherForm from '~/components/views/OfflineLesson/QueryOfflineTeacherForm.vue'
-import { usePageBuilderStore } from '~/layers/page-builder/stores/pageBuilder'
+import Button from "primevue/button";
+import {computed, ref, watch} from "vue";
+import RatingEmptyStarIcon from "@components/base/icons/RatingEmptyStarIcon.vue";
+import RatingFullStarIcon from "@components/base/icons/RatingFullStarIcon.vue";
+import RatingHalfStarIcon from "@components/base/icons/RatingHalfStarIcon.vue";
+import VarifiedTickMarkIcon from "@components/base/icons/VarifiedTickMarkIcon.vue";
+import QueryOfflineTeacherForm from "@components/views/OfflineLesson/QueryOfflineTeacherForm.vue";
+import {usePageBuilderStore} from "@layers/page-builder/stores/pageBuilder";
 import {
   headingClassMap,
   paragraphBaseClass,
-} from '../../../utils/headingClasses'
+} from "../../../utils/headingClasses";
 
 const props = defineProps({
-  id: { type: String, default: '' },
-  title: { type: String, default: '' },
-  titleTag: { type: String, default: 'h2' },
-  paragraph: { type: String, default: '' },
+  id: {type: String, default: ""},
+  title: {type: String, default: ""},
+  titleTag: {type: String, default: "h2"},
+  paragraph: {type: String, default: ""},
   teachers: {
     type: Array,
     default: () => [],
@@ -25,124 +25,124 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  viewMode: { type: String, default: 'grid' }, // 'grid' or 'list'
-  isEditing: { type: Boolean, default: false },
-  itemsPerPage: { type: Number, default: 12 },
-})
+  viewMode: {type: String, default: "grid"}, // 'grid' or 'list'
+  isEditing: {type: Boolean, default: false},
+  itemsPerPage: {type: Number, default: 12},
+});
 
-const emit = defineEmits(['update:props'])
+const emit = defineEmits(["update:props"]);
 
-const store = usePageBuilderStore()
-const isPreview = computed(() => store.isPreview)
+const store = usePageBuilderStore();
+const isPreview = computed(() => store.isPreview);
 
-const currentPage = ref(1)
-const teacherSlug = ref('')
-const showOfflineQueryForm = ref(false)
+const currentPage = ref(1);
+const teacherSlug = ref("");
+const showOfflineQueryForm = ref(false);
 const paginatedTeachers = computed(() => {
-  if (!hasTeachers.value) return []
-  const start = (currentPage.value - 1) * props.itemsPerPage
-  const end = start + props.itemsPerPage
-  return props.teachers.slice(start, end)
-})
+  if (!hasTeachers.value) return [];
+  const start = (currentPage.value - 1) * props.itemsPerPage;
+  const end = start + props.itemsPerPage;
+  return props.teachers.slice(start, end);
+});
 
 const getActualIndex = (localIndex) => {
   return hasTeachers.value
     ? (currentPage.value - 1) * props.itemsPerPage + localIndex
-    : 0
-}
+    : 0;
+};
 
 const pagination = computed(() => {
-  const totalItems = props.teachers.length
-  const totalPages = Math.ceil(totalItems / props.itemsPerPage)
+  const totalItems = props.teachers.length;
+  const totalPages = Math.ceil(totalItems / props.itemsPerPage);
   return {
     currentPage: currentPage.value,
     totalPages: totalPages,
     hasNextPage: currentPage.value < totalPages,
     hasPreviousPage: currentPage.value > 1,
-  }
-})
+  };
+});
 
 const handlePageChange = (page) => {
-  currentPage.value = page
-  const el = document.querySelector(`[data-component-id="${props.id}"]`)
+  currentPage.value = page;
+  const el = document.querySelector(`[data-component-id="${props.id}"]`);
   if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    el.scrollIntoView({behavior: "smooth", block: "start"});
   }
-}
+};
 
 watch(
   () => props.teachers,
   () => {
-    currentPage.value = 1
+    currentPage.value = 1;
   },
-  { deep: true }
-)
+  {deep: true},
+);
 
-const hasTitle = computed(() => props.title && props.title.trim().length > 0)
+const hasTitle = computed(() => props.title && props.title.trim().length > 0);
 const hasParagraph = computed(
-  () => props.paragraph && props.paragraph.trim().length > 0
-)
-const hasTeachers = computed(() => props.teachers && props.teachers.length > 0)
-const hasButtons = computed(() => props.buttons && props.buttons.length > 0)
+  () => props.paragraph && props.paragraph.trim().length > 0,
+);
+const hasTeachers = computed(() => props.teachers && props.teachers.length > 0);
+const hasButtons = computed(() => props.buttons && props.buttons.length > 0);
 
 const headingClass = computed(
-  () => headingClassMap[props.titleTag] || headingClassMap.h2
-)
+  () => headingClassMap[props.titleTag] || headingClassMap.h2,
+);
 
 const getParagraphs = (text) => {
-  if (!text) return []
+  if (!text) return [];
   return text
-    .split('\n')
+    .split("\n")
     .map((t) => t.trim())
-    .filter((t) => t.length > 0)
-}
+    .filter((t) => t.length > 0);
+};
 
 const updateTitle = (event) => {
-  emit('update:props', { title: event.target.innerText })
-}
+  emit("update:props", {title: event.target.innerText});
+};
 
 const updateParagraph = (event) => {
-  emit('update:props', { paragraph: event.target.innerText })
-}
+  emit("update:props", {paragraph: event.target.innerText});
+};
 
 const updateTeacher = (index, key, value) => {
-  const updated = [...props.teachers]
-  updated[index] = { ...updated[index], [key]: value }
-  emit('update:props', { teachers: updated })
-}
+  const updated = [...props.teachers];
+  updated[index] = {...updated[index], [key]: value};
+  emit("update:props", {teachers: updated});
+};
 
 const getButtonHoverClasses = (button) => {
-  const variant = button.variant || 'filled'
-  if (variant === 'filled') return 'hover:brightness-95'
-  if (variant === 'outlined')
-    return 'hover:!text-black hover:!ring-1 hover:!ring-black'
-  return 'hover:underline hover:!text-black'
-}
+  const variant = button.variant || "filled";
+  if (variant === "filled") return "hover:brightness-95";
+  if (variant === "outlined")
+    return "hover:!text-black hover:!ring-1 hover:!ring-black";
+  return "hover:underline hover:!text-black";
+};
 
 const handleButtonClick = (button) => {
-  if (!isPreview.value) return
+  if (!isPreview.value) return;
   if (button.link) {
-    if (button.target === '_blank') {
-      window.open(button.link, '_blank')
+    if (button.target === "_blank") {
+      window.open(button.link, "_blank");
     } else {
-      window.location.href = button.link
+      window.location.href = button.link;
     }
   }
-}
+};
 
 const handleBookLessonClick = (slug) => {
-  if (!isPreview.value) return
-  if (!slug) return
-  teacherSlug.value = slug
-  showOfflineQueryForm.value = true
-}
+  if (!isPreview.value) return;
+  if (!slug) return;
+  teacherSlug.value = slug;
+  showOfflineQueryForm.value = true;
+};
 
 const handleTeacherNameClick = (slug) => {
-  if (!isPreview.value) return
-  if (!slug) return
+  if (!isPreview.value) return;
+  if (!slug) return;
 
-  navigateTo(`/teacher-profile/${slug}?teachingMode=offline`)
-}
+  navigateTo(`/teacher-profile/${slug}?teachingMode=offline`);
+};
 </script>
 
 <template>
@@ -166,7 +166,7 @@ const handleTeacherNameClick = (slug) => {
         ]"
         @blur="updateTitle"
       >
-        {{ title || (isEditing ? 'Enter title...' : '') }}
+        {{ title || (isEditing ? "Enter title..." : "") }}
       </component>
 
       <!-- Paragraph -->
@@ -193,7 +193,7 @@ const handleTeacherNameClick = (slug) => {
           </p>
         </template>
         <p v-else class="text-gray-400 italic">
-          {{ isEditing ? 'Enter paragraph text...' : '' }}
+          {{ isEditing ? "Enter paragraph text..." : "" }}
         </p>
       </div>
 
@@ -241,13 +241,13 @@ const handleTeacherNameClick = (slug) => {
                   updateTeacher(
                     getActualIndex(localIndex),
                     'imageText',
-                    $event.target.innerText
+                    $event.target.innerText,
                   )
                 "
               >
                 {{
                   teacher.imageText ||
-                  (teacher.name ? teacher.name.charAt(0) : '3')
+                  (teacher.name ? teacher.name.charAt(0) : "3")
                 }}
               </div>
             </div>
@@ -269,11 +269,11 @@ const handleTeacherNameClick = (slug) => {
                   updateTeacher(
                     getActualIndex(localIndex),
                     'rating',
-                    $event.target.innerText
+                    $event.target.innerText,
                   )
                 "
               >
-                {{ teacher.rating || (isEditing ? '4.9' : '4.9') }}
+                {{ teacher.rating || (isEditing ? "4.9" : "4.9") }}
               </div>
               <div class="flex mx-4">
                 <template v-for="i in 5" :key="i">
@@ -305,11 +305,11 @@ const handleTeacherNameClick = (slug) => {
                   updateTeacher(
                     getActualIndex(localIndex),
                     'students',
-                    $event.target.innerText
+                    $event.target.innerText,
                   )
                 "
               >
-                ({{ teacher.ratingCount || (isEditing ? '0' : '0') }})
+                ({{ teacher.ratingCount || (isEditing ? "0" : "0") }})
               </div>
             </div>
 
@@ -327,11 +327,11 @@ const handleTeacherNameClick = (slug) => {
                   updateTeacher(
                     getActualIndex(localIndex),
                     'name',
-                    $event.target.innerText
+                    $event.target.innerText,
                   )
                 "
               >
-                {{ teacher.name || (isEditing ? 'Jonah Hill' : 'Jonah Hill') }}
+                {{ teacher.name || (isEditing ? "Jonah Hill" : "Jonah Hill") }}
               </h2>
               <div className="mx-2">
                 <VarifiedTickMarkIcon />
@@ -354,15 +354,15 @@ const handleTeacherNameClick = (slug) => {
                 updateTeacher(
                   getActualIndex(localIndex),
                   'discipline',
-                  $event.target.innerText
+                  $event.target.innerText,
                 )
               "
             >
               {{
                 teacher.discipline ||
                 (isEditing
-                  ? 'Guitar, Voice, Songwriting'
-                  : 'Guitar, Voice, Songwriting')
+                  ? "Guitar, Voice, Songwriting"
+                  : "Guitar, Voice, Songwriting")
               }}
             </p>
 
@@ -405,7 +405,7 @@ const handleTeacherNameClick = (slug) => {
         <div
           v-if="hasButtons || isEditing"
           class="flex flex-wrap gap-3 mt-6"
-          :class="{ 'pointer-events-none opacity-75': isEditing }"
+          :class="{'pointer-events-none opacity-75': isEditing}"
         >
           <Button
             v-for="(button, index) in buttons"
@@ -471,13 +471,13 @@ const handleTeacherNameClick = (slug) => {
                     updateTeacher(
                       getActualIndex(localIndex),
                       'imageText',
-                      $event.target.innerText
+                      $event.target.innerText,
                     )
                   "
                 >
                   {{
                     teacher.imageText ||
-                    (teacher.name ? teacher.name.charAt(0) : '1')
+                    (teacher.name ? teacher.name.charAt(0) : "1")
                   }}
                 </div>
               </div>
@@ -510,12 +510,12 @@ const handleTeacherNameClick = (slug) => {
                     updateTeacher(
                       getActualIndex(localIndex),
                       'name',
-                      $event.target.innerText
+                      $event.target.innerText,
                     )
                   "
                   @click="handleTeacherNameClick(teacher.slug)"
                 >
-                  {{ teacher.name || (isEditing ? 'Irene' : 'Irene') }}
+                  {{ teacher.name || (isEditing ? "Irene" : "Irene") }}
                 </h3>
                 <VarifiedTickMarkIcon />
                 <BaseBadge class="bg-pear" label="Best Seller" />
@@ -537,15 +537,15 @@ const handleTeacherNameClick = (slug) => {
                   updateTeacher(
                     getActualIndex(localIndex),
                     'discipline',
-                    $event.target.innerText
+                    $event.target.innerText,
                   )
                 "
               >
                 {{
                   teacher.discipline ||
                   (isEditing
-                    ? 'Guitar, Voice, Songwriting, Piano, Bass Guitar'
-                    : 'Guitar, Voice, Songwriting, Piano, Bass Guitar')
+                    ? "Guitar, Voice, Songwriting, Piano, Bass Guitar"
+                    : "Guitar, Voice, Songwriting, Piano, Bass Guitar")
                 }}
               </p>
 
@@ -566,11 +566,11 @@ const handleTeacherNameClick = (slug) => {
                       updateTeacher(
                         getActualIndex(localIndex),
                         'students',
-                        $event.target.innerText
+                        $event.target.innerText,
                       )
                     "
                   >
-                    {{ teacher.students || '229' }}
+                    {{ teacher.students || "229" }}
                   </span>
                   <span>Students</span>
                 </div>
@@ -587,11 +587,11 @@ const handleTeacherNameClick = (slug) => {
                       updateTeacher(
                         getActualIndex(localIndex),
                         'rating',
-                        $event.target.innerText
+                        $event.target.innerText,
                       )
                     "
                   >
-                    {{ teacher.rating || '4.9' }}
+                    {{ teacher.rating || "4.9" }}
                   </span>
                   <div class="flex">
                     <template v-for="i in 5" :key="i">
@@ -606,7 +606,7 @@ const handleTeacherNameClick = (slug) => {
                       <RatingEmptyStarIcon v-else custom-class="h-3.5 w-3.5" />
                     </template>
                   </div>
-                  <span>({{ teacher.ratingCount || '0' }})</span>
+                  <span>({{ teacher.ratingCount || "0" }})</span>
                 </div>
               </div>
 
@@ -627,21 +627,21 @@ const handleTeacherNameClick = (slug) => {
                   updateTeacher(
                     getActualIndex(localIndex),
                     'profileSummary',
-                    $event.target.innerText
+                    $event.target.innerText,
                   )
                 "
               >
                 {{
                   teacher.profileSummary ||
                   (isEditing
-                    ? 'With over 10 years of musical experience, Chloe has been teaching songwriting, voice, and guitar for two years.'
-                    : 'With over 10 years of musical experience, Chloe has been teaching songwriting, voice, and guitar for two years.')
+                    ? "With over 10 years of musical experience, Chloe has been teaching songwriting, voice, and guitar for two years."
+                    : "With over 10 years of musical experience, Chloe has been teaching songwriting, voice, and guitar for two years.")
                 }}
               </p>
 
               <!-- Language -->
               <p :class="paragraphBaseClass">
-                <span>{{ teacher.name || 'Chloe Bennett' }} Speaks</span>
+                <span>{{ teacher.name || "Chloe Bennett" }} Speaks</span>
                 <span
                   class="outline-none ml-1 font-medium"
                   :class="{
@@ -654,13 +654,13 @@ const handleTeacherNameClick = (slug) => {
                     updateTeacher(
                       getActualIndex(localIndex),
                       'language',
-                      $event.target.innerText
+                      $event.target.innerText,
                     )
                   "
                 >
                   {{
                     teacher.language ||
-                    (isEditing ? 'English & Spanish' : 'English & Spanish')
+                    (isEditing ? "English & Spanish" : "English & Spanish")
                   }}
                 </span>
               </p>
@@ -692,7 +692,7 @@ const handleTeacherNameClick = (slug) => {
         <div
           v-if="hasButtons || isEditing"
           class="flex flex-wrap gap-3 mt-6"
-          :class="{ 'pointer-events-none opacity-75': isEditing }"
+          :class="{'pointer-events-none opacity-75': isEditing}"
         >
           <Button
             v-for="(button, index) in buttons"
@@ -721,7 +721,7 @@ const handleTeacherNameClick = (slug) => {
       modal
       :block-scroll="true"
       header="Submit In-person Lesson Query"
-      :style="{ width: '40rem', maxWidth: '95vw' }"
+      :style="{width: '40rem', maxWidth: '95vw'}"
     >
       <QueryOfflineTeacherForm
         :teacher-slug="teacherSlug"

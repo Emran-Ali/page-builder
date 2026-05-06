@@ -1,44 +1,44 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
+import {ref, watch} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
+const store = usePageBuilderStore();
 
 // Local reactive data
-const localProps = ref({})
+const localProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'testimonial') {
-      localProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "testimonial") {
+      localProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Update props function
 const updateProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, localProps.value)
+    store.updateComponentProps(props.component.id, localProps.value);
   }
-}
+};
 
 // Watchers for immediate updates
 const updateProp = (key, value) => {
-  localProps.value[key] = value
-  updateProps()
-}
+  localProps.value[key] = value;
+  updateProps();
+};
 </script>
 
 <template>

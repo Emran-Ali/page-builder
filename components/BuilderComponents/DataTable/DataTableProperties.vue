@@ -1,178 +1,178 @@
 <script setup>
-import { ref, watch, nextTick } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
+import {ref, watch, nextTick} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const dataTableProps = ref({})
+const store = usePageBuilderStore();
+const dataTableProps = ref({});
 
 // Watch for component prop changes and sync state
 watch(
   () => props.component?.props,
   (newProps) => {
-    if (newProps && props.component.type === 'datatable') {
-      dataTableProps.value = { ...newProps }
+    if (newProps && props.component.type === "datatable") {
+      dataTableProps.value = {...newProps};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Update function
 const updateDataTableProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, dataTableProps.value)
+    store.updateComponentProps(props.component.id, dataTableProps.value);
   }
-}
+};
 
 // Edit content function
 const editDataTableContent = async () => {
   if (props.component) {
     // Enable editing mode
-    store.enableComponentEditing(props.component.id)
+    store.enableComponentEditing(props.component.id);
 
     // Wait for the next tick to ensure the inputs are rendered
-    await nextTick()
+    await nextTick();
 
     // Focus the first input (header cell)
     const firstInput = document.querySelector(
-      `[data-component-id="${props.component.id}"] input`
-    )
+      `[data-component-id="${props.component.id}"] input`,
+    );
     if (firstInput) {
-      firstInput.focus()
-      firstInput.select()
+      firstInput.focus();
+      firstInput.select();
     }
   }
-}
+};
 
 // Finish editing function
 const finishEditingContent = () => {
   if (props.component) {
-    store.disableComponentEditing(props.component.id)
+    store.disableComponentEditing(props.component.id);
   }
-}
+};
 
 // Add new row
 const addRow = () => {
   if (props.component) {
-    const currentData = [...props.component.props.data]
-    const newRow = {}
+    const currentData = [...props.component.props.data];
+    const newRow = {};
 
     // Initialize empty values for each column field
     props.component.props.columns.forEach((col) => {
-      newRow[col.field] = 'New Value'
-    })
+      newRow[col.field] = "New Value";
+    });
 
-    currentData.push(newRow)
+    currentData.push(newRow);
 
     store.updateComponentProps(props.component.id, {
       ...dataTableProps.value,
       data: currentData,
-    })
+    });
   }
-}
+};
 
 // Remove last row
 const removeRow = () => {
   if (props.component && props.component.props.data.length > 1) {
-    const currentData = [...props.component.props.data]
-    currentData.pop()
+    const currentData = [...props.component.props.data];
+    currentData.pop();
 
     store.updateComponentProps(props.component.id, {
       ...dataTableProps.value,
       data: currentData,
-    })
+    });
   }
-}
+};
 
 // Add new column with equal width distribution
 const addColumn = () => {
   if (props.component) {
-    const currentColumns = [...props.component.props.columns]
-    const currentData = [...props.component.props.data]
+    const currentColumns = [...props.component.props.columns];
+    const currentData = [...props.component.props.data];
 
-    const newFieldName = `field${currentColumns.length + 1}`
-    const totalColumns = currentColumns.length + 1
-    const equalWidth = `width: ${Math.floor(100 / totalColumns)}%`
+    const newFieldName = `field${currentColumns.length + 1}`;
+    const totalColumns = currentColumns.length + 1;
+    const equalWidth = `width: ${Math.floor(100 / totalColumns)}%`;
 
     // Update existing columns to have equal width
     currentColumns.forEach((column) => {
-      column.style = equalWidth
-      column.sortable = dataTableProps.value.sortable || false
-    })
+      column.style = equalWidth;
+      column.sortable = dataTableProps.value.sortable || false;
+    });
 
     const newColumn = {
       field: newFieldName,
       header: `Header ${currentColumns.length + 1}`,
       sortable: dataTableProps.value.sortable || false,
       style: equalWidth,
-    }
+    };
 
-    currentColumns.push(newColumn)
+    currentColumns.push(newColumn);
 
     // Add the new field to all existing data rows
     currentData.forEach((row) => {
-      row[newFieldName] = 'New Data'
-    })
+      row[newFieldName] = "New Data";
+    });
 
     store.updateComponentProps(props.component.id, {
       ...dataTableProps.value,
       columns: currentColumns,
       data: currentData,
-    })
+    });
   }
-}
+};
 
 // Remove last column and redistribute widths
 const removeColumn = () => {
   if (props.component && props.component.props.columns.length > 1) {
-    const currentColumns = [...props.component.props.columns]
-    const currentData = [...props.component.props.data]
+    const currentColumns = [...props.component.props.columns];
+    const currentData = [...props.component.props.data];
 
-    const removedColumn = currentColumns.pop()
-    const totalColumns = currentColumns.length
-    const equalWidth = `width: ${Math.floor(100 / totalColumns)}%`
+    const removedColumn = currentColumns.pop();
+    const totalColumns = currentColumns.length;
+    const equalWidth = `width: ${Math.floor(100 / totalColumns)}%`;
 
     // Update remaining columns to have equal width
     currentColumns.forEach((column) => {
-      column.style = equalWidth
-    })
+      column.style = equalWidth;
+    });
 
     // Remove the field from all data rows
     currentData.forEach((row) => {
-      delete row[removedColumn.field]
-    })
+      delete row[removedColumn.field];
+    });
 
     store.updateComponentProps(props.component.id, {
       ...dataTableProps.value,
       columns: currentColumns,
       data: currentData,
-    })
+    });
   }
-}
+};
 
 // Update global sortable for all columns
 const updateGlobalSortable = () => {
   if (props.component) {
-    const currentColumns = [...props.component.props.columns]
-    const isGlobalSortable = dataTableProps.value.sortable
+    const currentColumns = [...props.component.props.columns];
+    const isGlobalSortable = dataTableProps.value.sortable;
 
     // Update sortable property for all columns
     currentColumns.forEach((column) => {
-      column.sortable = isGlobalSortable
-    })
+      column.sortable = isGlobalSortable;
+    });
 
     store.updateComponentProps(props.component.id, {
       ...dataTableProps.value,
       columns: currentColumns,
-    })
+    });
   }
-}
+};
 </script>
 
 <template>
@@ -270,9 +270,9 @@ const updateGlobalSortable = () => {
               class="w-full rounded-none"
               size="small"
               :options="[
-                { label: 'Small', value: 'small' },
-                { label: 'Normal', value: 'normal' },
-                { label: 'Large', value: 'large' },
+                {label: 'Small', value: 'small'},
+                {label: 'Normal', value: 'normal'},
+                {label: 'Large', value: 'large'},
               ]"
               option-label="label"
               option-value="value"

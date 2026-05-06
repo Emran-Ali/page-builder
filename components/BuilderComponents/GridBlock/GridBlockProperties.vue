@@ -1,134 +1,134 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
-import Button from 'primevue/button'
-import Dropdown from 'primevue/dropdown'
+import {ref, watch} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
+const store = usePageBuilderStore();
 
 // Local reactive data
-const localProps = ref({})
+const localProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'gridblock') {
-      localProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "gridblock") {
+      localProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Update props function
 const updateProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, localProps.value)
+    store.updateComponentProps(props.component.id, localProps.value);
   }
-}
+};
 
 // Update simple props
 const updatePropsKey = (key, value) => {
-  localProps.value[key] = value
-  updateProps()
-}
+  localProps.value[key] = value;
+  updateProps();
+};
 
 // Grid item management
 const addItem = () => {
   if (!localProps.value.items) {
-    localProps.value.items = []
+    localProps.value.items = [];
   }
 
   // Get the next item number for placeholder text
-  const itemNumber = localProps.value.items.length + 1
+  const itemNumber = localProps.value.items.length + 1;
 
   localProps.value.items.push({
     title: `Your Title Here ${itemNumber}`,
     paragraph:
-      'This is your paragraph text. You can customize the content through the properties panel.',
-    imageSrc: 'https://placehold.co/600x400',
+      "This is your paragraph text. You can customize the content through the properties panel.",
+    imageSrc: "https://placehold.co/600x400",
     imageAlt: `Grid item ${itemNumber}`,
-    link: '#',
-    linkText: 'Read more',
-    linkTarget: '_self',
-  })
-  updateProps()
-}
+    link: "#",
+    linkText: "Read more",
+    linkTarget: "_self",
+  });
+  updateProps();
+};
 
 const removeItem = (index) => {
   if (localProps.value.items && localProps.value.items[index]) {
-    localProps.value.items.splice(index, 1)
-    updateProps()
+    localProps.value.items.splice(index, 1);
+    updateProps();
   }
-}
+};
 
 const updateItem = (index, key, value) => {
   if (localProps.value.items && localProps.value.items[index]) {
-    localProps.value.items[index][key] = value
-    updateProps()
+    localProps.value.items[index][key] = value;
+    updateProps();
   }
-}
+};
 
 const headingOptions = [
-  { label: 'Heading 1', value: 'h1' },
-  { label: 'Heading 2', value: 'h2' },
-  { label: 'Heading 3', value: 'h3' },
-]
+  {label: "Heading 1", value: "h1"},
+  {label: "Heading 2", value: "h2"},
+  {label: "Heading 3", value: "h3"},
+];
 
 // Button management
 const addButton = () => {
   if (!localProps.value.buttons) {
-    localProps.value.buttons = []
+    localProps.value.buttons = [];
   }
   localProps.value.buttons.push({
-    label: 'New Button',
-    link: '',
-    severity: 'primary',
-    variant: 'filled',
-    target: '_self',
-  })
-  updateProps()
-}
+    label: "New Button",
+    link: "",
+    severity: "primary",
+    variant: "filled",
+    target: "_self",
+  });
+  updateProps();
+};
 
 const removeButton = (index) => {
   if (localProps.value.buttons && localProps.value.buttons[index]) {
-    localProps.value.buttons.splice(index, 1)
-    updateProps()
+    localProps.value.buttons.splice(index, 1);
+    updateProps();
   }
-}
+};
 
 const updateButton = (index, field, value) => {
   if (localProps.value.buttons && localProps.value.buttons[index]) {
-    localProps.value.buttons[index][field] = value
-    updateProps()
+    localProps.value.buttons[index][field] = value;
+    updateProps();
   }
-}
+};
 
 const severityOptions = [
-  { label: 'Primary', value: 'primary' },
-  { label: 'Secondary', value: 'secondary' },
-]
+  {label: "Primary", value: "primary"},
+  {label: "Secondary", value: "secondary"},
+];
 
 const variantOptions = [
-  { label: 'Filled', value: 'filled' },
-  { label: 'Outlined', value: 'outlined' },
-  { label: 'Text', value: 'text' },
-]
+  {label: "Filled", value: "filled"},
+  {label: "Outlined", value: "outlined"},
+  {label: "Text", value: "text"},
+];
 
 const alignmentOptions = [
-  { label: 'Left', value: 'left' },
-  { label: 'Center', value: 'center' },
-  { label: 'Right', value: 'right' },
-]
+  {label: "Left", value: "left"},
+  {label: "Center", value: "center"},
+  {label: "Right", value: "right"},
+];
 </script>
 
 <template>

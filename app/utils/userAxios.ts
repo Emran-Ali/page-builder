@@ -1,13 +1,8 @@
-import axios, {type AxiosInstance} from "axios";
-
-/**
- * Single axios instance for user operations
- * This prevents conflicts with the global axios plugin that automatically adds user tokens
- */
+import axios, { type AxiosInstance } from "axios";
 
 let _userAxios: AxiosInstance | null = null;
 
-export const getuserAxios = () => {
+export const getUserAxios = () => {
   if (!_userAxios) {
     const config = useRuntimeConfig();
     _userAxios = axios.create({

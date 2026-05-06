@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { regions } from 'public/regions'
-import QueryOfflineTeacherForm from '~/components/views/OfflineLesson/QueryOfflineTeacherForm.vue'
-import { usePageBuilderStore } from '~/layers/page-builder/stores/pageBuilder'
-import { useSavedTeacher } from '~/pinia/student-store/saved-teacher'
-import OfflineCourseCardList from './OfflineCourseCardList.vue'
-import OfflineCourseCardSkeletons from './OfflineCourseCardSkeletons.vue'
+import {regions} from "public/regions";
+import QueryOfflineTeacherForm from "@components/views/OfflineLesson/QueryOfflineTeacherForm.vue";
+import {usePageBuilderStore} from "@layers/page-builder/stores/pageBuilder";
+import {useSavedTeacher} from "@pinia/student-store/saved-teacher";
+import OfflineCourseCardList from "./OfflineCourseCardList.vue";
+import OfflineCourseCardSkeletons from "./OfflineCourseCardSkeletons.vue";
 
 const props = defineProps({
   initialArea: {
     type: String,
-    default: 'California',
+    default: "California",
   },
   itemsPerPage: {
     type: Number,
@@ -19,86 +19,86 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 
-const selectedArea = ref(props?.initialArea)
+const selectedArea = ref(props?.initialArea);
 
-const teacherSlug = ref('')
-const showOfflineQueryForm = ref(false)
+const teacherSlug = ref("");
+const showOfflineQueryForm = ref(false);
 
-const lessonStore = useLessonStore()
-const { is } = useGlobalStore()
-const authStore = useAuthStore()
-const saveTeacherStore = useSavedTeacher()
-const store = usePageBuilderStore()
-const isPreview = computed(() => store.isPreview)
+const lessonStore = useLessonStore();
+const {is} = useGlobalStore();
+const authStore = useAuthStore();
+const saveTeacherStore = useSavedTeacher();
+const store = usePageBuilderStore();
+const isPreview = computed(() => store.isPreview);
 
-const lessons = computed(() => lessonStore.getOfflineTeachers)
-const hasLessons = computed(() => lessons.value && lessons.value.length > 0)
-const studentProfileId = computed(() => authStore.getStudentProfileId)
+const lessons = computed(() => lessonStore.getOfflineTeachers);
+const hasLessons = computed(() => lessons.value && lessons.value.length > 0);
+const studentProfileId = computed(() => authStore.getStudentProfileId);
 
 const pagination = computed(() => {
-  const metaData = (lessonStore.getMeta as Record<string, any>) || {}
+  const metaData = (lessonStore.getMeta as Record<string, any>) || {};
   return {
     currentPage: metaData.currentPage || 1,
     totalPages: metaData.totalPages || 1,
     hasNextPage: metaData.hasNextPage || false,
     hasPreviousPage: metaData.hasPreviousPage || false,
-  }
-})
+  };
+});
 
 const handlePageChange = (page: any) => {
-  if (page === pagination.value.currentPage) return
+  if (page === pagination.value.currentPage) return;
 
   lessonStore.fetchOfflineTeachers({
     limit: props.itemsPerPage,
     area: selectedArea.value,
     page: page,
-  })
-}
+  });
+};
 
 const searchTutor = async () => {
-  if (!selectedArea.value) return
+  if (!selectedArea.value) return;
 
   lessonStore.fetchOfflineTeachers({
     area: selectedArea.value,
     page: 1,
     limit: props.itemsPerPage,
-  })
-}
+  });
+};
 
 const bookTeacher = (slug?: string) => {
-  if (!isPreview.value) return
-  if (!slug) return
-  teacherSlug.value = slug
-  showOfflineQueryForm.value = true
-}
+  if (!isPreview.value) return;
+  if (!slug) return;
+  teacherSlug.value = slug;
+  showOfflineQueryForm.value = true;
+};
 
 watch(
   () => props.initialArea,
   (newArea) => {
-    selectedArea.value = newArea
-    searchTutor()
-  }
-)
+    selectedArea.value = newArea;
+    searchTutor();
+  },
+);
 
 watch(
   () => props.itemsPerPage,
   () => {
-    searchTutor()
-  }
-)
+    searchTutor();
+  },
+);
 
 onMounted(async () => {
   lessonStore.fetchOfflineTeachers({
     area: selectedArea.value,
     page: 1,
     limit: props.itemsPerPage,
-  })
+  });
   if (studentProfileId.value) {
-    await saveTeacherStore.fetchFavouriteTeachers()
+    await saveTeacherStore.fetchFavouriteTeachers();
   }
-})
+});
 </script>
 
 <template>
@@ -163,7 +163,7 @@ onMounted(async () => {
       modal
       :block-scroll="true"
       header="Request In-person Lesson"
-      :style="{ width: '40rem', maxWidth: '95vw' }"
+      :style="{width: '40rem', maxWidth: '95vw'}"
     >
       <QueryOfflineTeacherForm
         :teacher-slug="teacherSlug"

@@ -1,99 +1,99 @@
 <script setup>
-import Button from 'primevue/button'
-import Dropdown from 'primevue/dropdown'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
-import { ref, watch } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import {ref, watch} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const localProps = ref({})
+const store = usePageBuilderStore();
+const localProps = ref({});
 
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'mapblock') {
-      localProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "mapblock") {
+      localProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 const updateProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, localProps.value)
+    store.updateComponentProps(props.component.id, localProps.value);
   }
-}
+};
 
 const updateProp = (key, value) => {
-  localProps.value[key] = value
-  updateProps()
-}
+  localProps.value[key] = value;
+  updateProps();
+};
 
 const normalizeMapInput = (raw) => {
-  if (!raw) return ''
-  const iframeMatch = raw.match(/<iframe[^>]*src=["']([^"']+)["']/i)
+  if (!raw) return "";
+  const iframeMatch = raw.match(/<iframe[^>]*src=["']([^"']+)["']/i);
   if (iframeMatch && iframeMatch[1]) {
-    return iframeMatch[1].trim()
+    return iframeMatch[1].trim();
   }
-  return raw.trim()
-}
+  return raw.trim();
+};
 
 const addButton = () => {
   if (!localProps.value.buttons) {
-    localProps.value.buttons = []
+    localProps.value.buttons = [];
   }
   localProps.value.buttons.push({
-    label: 'New Button',
-    link: '#',
-    severity: 'primary',
-    variant: 'filled',
-  })
-  updateProps()
-}
+    label: "New Button",
+    link: "#",
+    severity: "primary",
+    variant: "filled",
+  });
+  updateProps();
+};
 
 const removeButton = (index) => {
   if (localProps.value.buttons && localProps.value.buttons[index]) {
-    localProps.value.buttons.splice(index, 1)
-    updateProps()
+    localProps.value.buttons.splice(index, 1);
+    updateProps();
   }
-}
+};
 
 const updateButton = (index, key, value) => {
   if (localProps.value.buttons && localProps.value.buttons[index]) {
-    localProps.value.buttons[index][key] = value
-    updateProps()
+    localProps.value.buttons[index][key] = value;
+    updateProps();
   }
-}
+};
 
 const headingOptions = [
-  { label: 'Heading 1', value: 'h1' },
-  { label: 'Heading 2', value: 'h2' },
-  { label: 'Heading 3', value: 'h3' },
-]
+  {label: "Heading 1", value: "h1"},
+  {label: "Heading 2", value: "h2"},
+  {label: "Heading 3", value: "h3"},
+];
 
 const severityOptions = [
-  { label: 'Primary', value: 'primary' },
-  { label: 'Secondary', value: 'secondary' },
+  {label: "Primary", value: "primary"},
+  {label: "Secondary", value: "secondary"},
   // { label: 'Success', value: 'success' },
   // { label: 'Info', value: 'info' },
   // { label: 'Warning', value: 'warning' },
   // { label: 'Help', value: 'help' },
   // { label: 'Danger', value: 'danger' },
-]
+];
 
 const variantOptions = [
-  { label: 'Filled', value: 'filled' },
-  { label: 'Outlined', value: 'outlined' },
-  { label: 'Text', value: 'text' },
-]
+  {label: "Filled", value: "filled"},
+  {label: "Outlined", value: "outlined"},
+  {label: "Text", value: "text"},
+];
 </script>
 
 <template>

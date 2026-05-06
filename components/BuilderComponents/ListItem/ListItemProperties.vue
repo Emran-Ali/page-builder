@@ -1,82 +1,82 @@
 <script setup>
-import { ref, watch } from 'vue'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
-import Button from 'primevue/button'
-import Dropdown from 'primevue/dropdown'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
+import {ref, watch} from "vue";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+import {usePageBuilderStore} from "@stores/pageBuilder";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const listItemProps = ref({})
+const store = usePageBuilderStore();
+const listItemProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'listitem') {
-      listItemProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "listitem") {
+      listItemProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Update function with real-time updates
 const updateListItemProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, listItemProps.value)
+    store.updateComponentProps(props.component.id, listItemProps.value);
   }
-}
+};
 
 const updateProp = (key, value) => {
-  listItemProps.value[key] = value
-  updateListItemProps()
-}
+  listItemProps.value[key] = value;
+  updateListItemProps();
+};
 
 const addItem = () => {
   if (!listItemProps.value.items) {
-    listItemProps.value.items = []
+    listItemProps.value.items = [];
   }
 
   // Get the next item number for placeholder text
-  const itemNumber = listItemProps.value.items.length + 1
+  const itemNumber = listItemProps.value.items.length + 1;
 
-  listItemProps.value.items.push(`List item ${itemNumber}`)
-  updateListItemProps()
-}
+  listItemProps.value.items.push(`List item ${itemNumber}`);
+  updateListItemProps();
+};
 
 const removeItem = (index) => {
   if (listItemProps.value.items && listItemProps.value.items[index]) {
-    listItemProps.value.items.splice(index, 1)
-    updateListItemProps()
+    listItemProps.value.items.splice(index, 1);
+    updateListItemProps();
   }
-}
+};
 
 const updateItem = (index, value) => {
   if (listItemProps.value.items && listItemProps.value.items[index]) {
-    listItemProps.value.items[index] = value
-    updateListItemProps()
+    listItemProps.value.items[index] = value;
+    updateListItemProps();
   }
-}
+};
 
 const headingOptions = [
-  { label: 'Heading 1', value: 'h1' },
-  { label: 'Heading 2', value: 'h2' },
-  { label: 'Heading 3', value: 'h3' },
-]
+  {label: "Heading 1", value: "h1"},
+  {label: "Heading 2", value: "h2"},
+  {label: "Heading 3", value: "h3"},
+];
 
 const listStyleOptions = [
-  { label: 'Circle (Filled)', value: 'disc' },
-  { label: 'Circle (Outline)', value: 'circle' },
-  { label: 'Square', value: 'square' },
-  { label: 'Numeric', value: 'decimal' },
-]
+  {label: "Circle (Filled)", value: "disc"},
+  {label: "Circle (Outline)", value: "circle"},
+  {label: "Square", value: "square"},
+  {label: "Numeric", value: "decimal"},
+];
 </script>
 
 <template>

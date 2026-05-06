@@ -1,35 +1,35 @@
 <script setup>
-import Button from 'primevue/button'
-import { computed } from 'vue'
-import { usePageBuilderStore } from '~/layers/page-builder/stores/pageBuilder'
+import Button from "primevue/button";
+import {computed} from "vue";
+import {usePageBuilderStore} from "@layers/page-builder/stores/pageBuilder";
 import {
   headingClassMap,
   paragraphBaseClass,
-} from '../../../utils/headingClasses'
+} from "../../../utils/headingClasses";
 
 const props = defineProps({
   id: {
     type: String,
-    default: '',
+    default: "",
   },
   header: {
     type: String,
-    default: 'Ready to start your musical journey?',
+    default: "Ready to start your musical journey?",
   },
   title: {
     type: String,
     default:
-      'We have expert teachers who teach in all styles of music; experts in Jazz, Classical, Pop, and more.',
+      "We have expert teachers who teach in all styles of music; experts in Jazz, Classical, Pop, and more.",
   },
   buttons: {
     type: Array,
     default: () => [
       {
-        label: 'Find Your Tutor',
-        link: '#',
-        severity: 'primary',
-        variant: 'filled',
-        target: '_self',
+        label: "Find Your Tutor",
+        link: "#",
+        severity: "primary",
+        variant: "filled",
+        target: "_self",
       },
     ],
   },
@@ -37,36 +37,38 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 
-const emit = defineEmits(['update:props'])
+const emit = defineEmits(["update:props"]);
 
-const store = usePageBuilderStore()
-const isPreview = computed(() => store.isPreview)
+const store = usePageBuilderStore();
+const isPreview = computed(() => store.isPreview);
 
-const hasHeader = computed(() => props.header && props.header.trim().length > 0)
-const hasTitle = computed(() => props.title && props.title.trim().length > 0)
-const hasButtons = computed(() => props.buttons && props.buttons.length > 0)
+const hasHeader = computed(
+  () => props.header && props.header.trim().length > 0,
+);
+const hasTitle = computed(() => props.title && props.title.trim().length > 0);
+const hasButtons = computed(() => props.buttons && props.buttons.length > 0);
 
 const updateHeader = (event) => {
-  emit('update:props', { header: event.target.innerText })
-}
+  emit("update:props", {header: event.target.innerText});
+};
 
 const updateTitle = (event) => {
-  emit('update:props', { title: event.target.innerText })
-}
+  emit("update:props", {title: event.target.innerText});
+};
 
 const handleButtonClick = (button) => {
-  if (props.isEditing) return
-  if (!isPreview.value) return
+  if (props.isEditing) return;
+  if (!isPreview.value) return;
   if (button.link) {
-    if (button.target === '_blank') {
-      window.open(button.link, '_blank')
+    if (button.target === "_blank") {
+      window.open(button.link, "_blank");
     } else {
-      window.location.href = button.link
+      window.location.href = button.link;
     }
   }
-}
+};
 </script>
 
 <template>
@@ -91,7 +93,7 @@ const handleButtonClick = (button) => {
       :contenteditable="isEditing"
       @blur="updateHeader"
     >
-      {{ header || (isEditing ? 'Enter header...' : '') }}
+      {{ header || (isEditing ? "Enter header..." : "") }}
     </h2>
 
     <!-- Title / Description -->
@@ -111,7 +113,7 @@ const handleButtonClick = (button) => {
       :contenteditable="isEditing"
       @blur="updateTitle"
     >
-      {{ title || (isEditing ? 'Enter description...' : '') }}
+      {{ title || (isEditing ? "Enter description..." : "") }}
     </p>
 
     <!-- Buttons -->

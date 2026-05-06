@@ -1,57 +1,57 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
-import Dropdown from 'primevue/dropdown'
+import {ref, watch} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import Dropdown from "primevue/dropdown";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
+const store = usePageBuilderStore();
 
 // Local reactive data
-const localProps = ref({})
+const localProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'searchofflineteacher') {
-      localProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "searchofflineteacher") {
+      localProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 const areaOptions = [
-  { label: 'Los Angeles Metro', value: 'California' },
-  { label: 'San Francisco Bay Area', value: 'San Francisco Bay Area' },
-  { label: 'Portland Metro', value: 'Portland, Oregon' },
-]
+  {label: "Los Angeles Metro", value: "California"},
+  {label: "San Francisco Bay Area", value: "San Francisco Bay Area"},
+  {label: "Portland Metro", value: "Portland, Oregon"},
+];
 
 const headingOptions = [
-  { label: 'Heading 1', value: 'h1' },
-  { label: 'Heading 2', value: 'h2' },
-  { label: 'Heading 3', value: 'h3' },
-]
+  {label: "Heading 1", value: "h1"},
+  {label: "Heading 2", value: "h2"},
+  {label: "Heading 3", value: "h3"},
+];
 
 // Update props function
 const updateProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, localProps.value)
+    store.updateComponentProps(props.component.id, localProps.value);
   }
-}
+};
 
 // Watchers for immediate updates
 const updateProp = (key, value) => {
-  localProps.value[key] = value
-  updateProps()
-}
+  localProps.value[key] = value;
+  updateProps();
+};
 </script>
 
 <template>

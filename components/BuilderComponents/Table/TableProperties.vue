@@ -1,78 +1,78 @@
 <script setup>
-import { usePageBuilderStore } from '~/stores/pageBuilder'
+import {usePageBuilderStore} from "@stores/pageBuilder";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const tableProps = ref({})
+const store = usePageBuilderStore();
+const tableProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'table') {
-      tableProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "table") {
+      tableProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Update function
 const updateTableProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, tableProps.value)
+    store.updateComponentProps(props.component.id, tableProps.value);
   }
-}
+};
 
 // Edit content function
 const editTableContent = async () => {
   if (props.component) {
     // Enable editing mode
-    store.enableComponentEditing(props.component.id)
+    store.enableComponentEditing(props.component.id);
 
     // Wait for the next tick to ensure the inputs are rendered
-    await nextTick()
+    await nextTick();
 
     // Focus the first table cell input (header cell)
     const firstInput = document.querySelector(
-      `[data-component-id="${props.component.id}"] input`
-    )
+      `[data-component-id="${props.component.id}"] input`,
+    );
     if (firstInput) {
-      firstInput.focus()
-      firstInput.select()
+      firstInput.focus();
+      firstInput.select();
     }
   }
-}
+};
 
 // Finish editing function
 const finishEditingContent = () => {
   if (props.component) {
-    store.disableComponentEditing(props.component.id)
+    store.disableComponentEditing(props.component.id);
   }
-}
+};
 
 const updateTableDimensions = () => {
   if (props.component) {
-    const currentData = [...props.component.props.data]
-    const targetRows = tableProps.value.rows
-    const targetColumns = tableProps.value.columns
+    const currentData = [...props.component.props.data];
+    const targetRows = tableProps.value.rows;
+    const targetColumns = tableProps.value.columns;
 
     if (targetRows < 2 || targetColumns < 2) {
-      alert('Rows and columns must be at least 2')
-      return
+      alert("Rows and columns must be at least 2");
+      return;
     }
 
     // Create new data array with proper dimensions
-    const newData = []
+    const newData = [];
 
     // Handle rows
     for (let rowIndex = 0; rowIndex < targetRows; rowIndex++) {
-      const row = []
+      const row = [];
 
       // Handle columns
       for (let colIndex = 0; colIndex < targetColumns; colIndex++) {
@@ -81,17 +81,17 @@ const updateTableDimensions = () => {
           currentData[rowIndex][colIndex] !== undefined
         ) {
           // Use existing data
-          row.push(currentData[rowIndex][colIndex])
+          row.push(currentData[rowIndex][colIndex]);
         } else {
           // Add new data
           if (rowIndex === 0) {
-            row.push(`Header ${colIndex + 1}`)
+            row.push(`Header ${colIndex + 1}`);
           } else {
-            row.push(`Row ${rowIndex} Col ${colIndex + 1}`)
+            row.push(`Row ${rowIndex} Col ${colIndex + 1}`);
           }
         }
       }
-      newData.push(row)
+      newData.push(row);
     }
 
     // Update the component with new data and dimensions
@@ -100,78 +100,78 @@ const updateTableDimensions = () => {
       data: newData,
       rows: targetRows,
       columns: targetColumns,
-    })
+    });
   }
-}
+};
 
 const addRow = () => {
   if (props.component) {
-    const currentData = [...props.component.props.data]
-    const newRow = Array(tableProps.value.columns).fill('New Row')
-    currentData.push(newRow)
+    const currentData = [...props.component.props.data];
+    const newRow = Array(tableProps.value.columns).fill("New Row");
+    currentData.push(newRow);
 
-    tableProps.value.rows = tableProps.value.rows + 1
+    tableProps.value.rows = tableProps.value.rows + 1;
 
     store.updateComponentProps(props.component.id, {
       ...tableProps.value,
       data: currentData,
       rows: tableProps.value.rows,
-    })
+    });
   }
-}
+};
 
 const removeRow = () => {
   if (props.component && tableProps.value.rows > 2) {
-    const currentData = [...props.component.props.data]
-    currentData.pop()
+    const currentData = [...props.component.props.data];
+    currentData.pop();
 
-    tableProps.value.rows = tableProps.value.rows - 1
+    tableProps.value.rows = tableProps.value.rows - 1;
 
     store.updateComponentProps(props.component.id, {
       ...tableProps.value,
       data: currentData,
       rows: tableProps.value.rows,
-    })
+    });
   }
-}
+};
 
 const addColumn = () => {
   if (props.component) {
-    const currentData = [...props.component.props.data]
+    const currentData = [...props.component.props.data];
     currentData.forEach((row, index) => {
       if (index === 0) {
-        row.push(`Header ${row.length + 1}`)
+        row.push(`Header ${row.length + 1}`);
       } else {
-        row.push('New Column')
+        row.push("New Column");
       }
-    })
+    });
 
-    tableProps.value.columns = tableProps.value.columns + 1
+    tableProps.value.columns = tableProps.value.columns + 1;
 
     store.updateComponentProps(props.component.id, {
       ...tableProps.value,
       data: currentData,
       columns: tableProps.value.columns,
-    })
+    });
   }
-}
+};
 
 const removeColumn = () => {
   if (props.component && tableProps.value.columns > 2) {
-    const currentData = [...props.component.props.data]
+    const currentData = [...props.component.props.data];
     currentData.forEach((row) => {
-      row.pop()
-    })
+      row.pop();
+    });
 
-    tableProps.value.columns = tableProps.value.columns - 1
+    tableProps.value.columns = tableProps.value.columns - 1;
 
     store.updateComponentProps(props.component.id, {
       ...tableProps.value,
       data: currentData,
       columns: tableProps.value.columns,
-    })
+    });
   }
-}
+};
 </script>
 
 <template>

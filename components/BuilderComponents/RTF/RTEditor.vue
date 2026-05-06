@@ -55,7 +55,7 @@
               <button
                 title="Toggle HTML View"
                 class="html-toggle-btn"
-                :class="{ active: htmlMode }"
+                :class="{active: htmlMode}"
                 @click.prevent="toggleHtmlMode"
               >
                 <i class="pi pi-code" />
@@ -111,64 +111,64 @@
 </template>
 
 <script setup>
-import Editor from 'primevue/editor'
-import Quill from 'quill'
-import { usePageCrudStore } from '~/layers/page-builder/stores/page-crud'
+import Editor from "primevue/editor";
+import Quill from "quill";
+import {usePageCrudStore} from "@layers/page-builder/stores/page-crud";
 
 if (import.meta.client) {
   // Register custom image blot to preserve styles
-  const Image = Quill.import('formats/image')
+  const Image = Quill.import("formats/image");
   class CustomImage extends Image {
     static create(value) {
-      let src = value
-      let style = null
-      if (typeof value === 'object' && value !== null) {
-        src = value.src
-        style = value.style
+      let src = value;
+      let style = null;
+      if (typeof value === "object" && value !== null) {
+        src = value.src;
+        style = value.style;
       }
-      const node = super.create(src)
+      const node = super.create(src);
       if (style) {
-        node.setAttribute('style', style)
+        node.setAttribute("style", style);
       }
-      return node
+      return node;
     }
 
     static value(node) {
-      const src = node.getAttribute('src')
-      const style = node.getAttribute('style')
+      const src = node.getAttribute("src");
+      const style = node.getAttribute("style");
       if (style) {
-        return { src, style }
+        return {src, style};
       }
-      return src
+      return src;
     }
   }
-  CustomImage.blotName = 'image'
-  CustomImage.tagName = 'IMG'
-  Quill.register(CustomImage, true)
+  CustomImage.blotName = "image";
+  CustomImage.tagName = "IMG";
+  Quill.register(CustomImage, true);
 
   // Register custom break blot for better newline handling
-  const Embed = Quill.import('blots/embed')
+  const Embed = Quill.import("blots/embed");
   class SmartBreak extends Embed {
     static create() {
-      return document.createElement('br')
+      return document.createElement("br");
     }
     static value() {
-      return true
+      return true;
     }
   }
-  SmartBreak.blotName = 'break'
-  SmartBreak.tagName = 'BR'
-  Quill.register(SmartBreak, true)
+  SmartBreak.blotName = "break";
+  SmartBreak.tagName = "BR";
+  Quill.register(SmartBreak, true);
 }
 
 const props = defineProps({
   modelValue: {
     type: String,
-    default: '',
+    default: "",
   },
   placeholder: {
     type: String,
-    default: 'Start writing...',
+    default: "Start writing...",
   },
   attachments: {
     type: Array,
@@ -188,186 +188,186 @@ const props = defineProps({
   },
   uploadEndpoint: {
     type: String,
-    default: 'page-image',
+    default: "page-image",
   },
   maxFileSizeMB: {
     type: Number,
     default: 5,
   },
-})
+});
 
 const emit = defineEmits([
-  'update:modelValue',
-  'update:attachments',
-  'upload-success',
-  'upload-error',
-])
+  "update:modelValue",
+  "update:attachments",
+  "upload-success",
+  "upload-error",
+]);
 
-const editorRef = ref(null)
-const fileInput = ref(null)
-const uploading = ref(false)
-const uploadProgress = ref(0)
-const htmlMode = ref(false)
+const editorRef = ref(null);
+const fileInput = ref(null);
+const uploading = ref(false);
+const uploadProgress = ref(0);
+const htmlMode = ref(false);
 
 // Upload composables
 
-const { handleSuccess, handleErrors } = useGlobalStore()
-const { uploadFile } = usePageCrudStore()
+const {handleSuccess, handleErrors} = useGlobalStore();
+const {uploadFile} = usePageCrudStore();
 
 const pt = {
   content: props.taskStyle
     ? `text-sm min-h-[300px] !px-4 !border-none`
     : `min-h-[150px] !py-2 !px-1`,
-  toolbar: '!border-t-0 !border-b !border-gray-200 !flex flex-wrap z-50',
-}
+  toolbar: "!border-t-0 !border-b !border-gray-200 !flex flex-wrap z-50",
+};
 
 const content = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value),
-})
+  set: (value) => emit("update:modelValue", value),
+});
 
 async function handleFileUpload(event) {
-  const file = event.target?.files[0]
-  if (!file) return
+  const file = event.target?.files[0];
+  if (!file) return;
 
   // Validate file type
-  if (!file.type.startsWith('image/')) {
-    handleErrors({ message: 'Please select an image file' })
-    return
+  if (!file.type.startsWith("image/")) {
+    handleErrors({message: "Please select an image file"});
+    return;
   }
 
   // Validate file size
-  const fileSizeInMB = file.size / (1024 * 1024)
+  const fileSizeInMB = file.size / (1024 * 1024);
   if (fileSizeInMB > props.maxFileSizeMB) {
     handleErrors({
       message: `File size exceeds the maximum limit of ${props.maxFileSizeMB}MB`,
-    })
-    return
+    });
+    return;
   }
 
   try {
-    uploading.value = true
-    uploadProgress.value = 0
+    uploading.value = true;
+    uploadProgress.value = 0;
 
     // Create FormData
-    const formData = new FormData()
-    formData.append('file', file)
+    const formData = new FormData();
+    formData.append("file", file);
 
     // Upload configuration with progress tracking
     const axiosConfig = {
       onUploadProgress: (progressEvent) => {
         if (progressEvent.total) {
           uploadProgress.value = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          )
+            (progressEvent.loaded * 100) / progressEvent.total,
+          );
         }
       },
-    }
+    };
 
     // Upload file
     const response = await uploadFile({
       file: formData,
       url: props.uploadEndpoint,
       config: axiosConfig,
-    })
+    });
 
-    const fileUrl = response?.data
+    const fileUrl = response?.data;
     // Access Quill instance robustly
-    let quill = null
+    let quill = null;
     if (editorRef.value) {
-      if (typeof editorRef.value.getQuill === 'function') {
-        quill = editorRef.value.getQuill()
+      if (typeof editorRef.value.getQuill === "function") {
+        quill = editorRef.value.getQuill();
       } else if (editorRef.value.quill) {
-        quill = editorRef.value.quill
+        quill = editorRef.value.quill;
       } else {
         // Fallback to finding by DOM
         const editorEl = editorRef.value.$el
-          ? editorRef.value.$el.querySelector('.ql-container')
-          : null
+          ? editorRef.value.$el.querySelector(".ql-container")
+          : null;
         if (editorEl) {
-          quill = Quill.find(editorEl)
+          quill = Quill.find(editorEl);
         }
       }
     }
 
     if (fileUrl && quill) {
-      const range = quill.getSelection(true)
-      const index = range ? range.index : 0
+      const range = quill.getSelection(true);
+      const index = range ? range.index : 0;
 
       // Use the custom blot structure
       quill.insertEmbed(
         index,
-        'image',
+        "image",
         {
           src: fileUrl,
           style:
-            'max-width: 95%; height: auto; border-radius: 12px; margin: 10px 6px; display: block;',
+            "max-width: 95%; height: auto; border-radius: 12px; margin: 10px 6px; display: block;",
         },
-        'user'
-      )
-      quill.setSelection(index + 1, 'silent')
+        "user",
+      );
+      quill.setSelection(index + 1, "silent");
 
       const newAttachments = [
         ...props.attachments,
-        { fileUrl, fileName: file.name },
-      ]
-      emit('update:attachments', newAttachments)
-      emit('upload-success', { fileUrl, fileName: file.name })
+        {fileUrl, fileName: file.name},
+      ];
+      emit("update:attachments", newAttachments);
+      emit("upload-success", {fileUrl, fileName: file.name});
 
       handleSuccess({
         message: `Image uploaded and inserted successfully. URL: ${fileUrl}`,
-      })
+      });
     } else if (!fileUrl) {
-      handleErrors({ message: 'Upload completed but no file URL received' })
+      handleErrors({message: "Upload completed but no file URL received"});
     }
   } catch (error) {
-    console.error('Upload error:', error)
-    handleErrors({ message: 'Failed to upload image' })
+    console.error("Upload error:", error);
+    handleErrors({message: "Failed to upload image"});
 
     // Recovery: if editor exists, ensure we still have current content
-    const editor = editorRef.value?.$el?.querySelector('.ql-editor')
+    const editor = editorRef.value?.$el?.querySelector(".ql-editor");
     if (editor) {
-      emit('update:modelValue', editor.innerHTML)
+      emit("update:modelValue", editor.innerHTML);
     }
 
-    emit('upload-error', error)
+    emit("upload-error", error);
   } finally {
-    event.target.value = ''
-    uploading.value = false
-    uploadProgress.value = 0
+    event.target.value = "";
+    uploading.value = false;
+    uploadProgress.value = 0;
   }
 }
 
 function triggerFileInput(event) {
-  event.preventDefault()
-  fileInput.value.click()
+  event.preventDefault();
+  fileInput.value.click();
 }
 
 async function handlePaste(e) {
-  const items = Array.from(e.clipboardData.items)
-  const imageItem = items.find((item) => item.type.startsWith('image/'))
+  const items = Array.from(e.clipboardData.items);
+  const imageItem = items.find((item) => item.type.startsWith("image/"));
 
   if (imageItem) {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
     try {
-      uploading.value = true
-      const file = imageItem.getAsFile()
+      uploading.value = true;
+      const file = imageItem.getAsFile();
 
       // Create a fake event object for handleFileUpload
       const fakeEvent = {
         target: {
           files: [file],
-          value: '',
+          value: "",
         },
-      }
+      };
 
-      await handleFileUpload(fakeEvent)
+      await handleFileUpload(fakeEvent);
     } catch (error) {
-      console.error('Paste error:', error)
-      handleErrors({ message: 'Failed to upload pasted image' })
+      console.error("Paste error:", error);
+      handleErrors({message: "Failed to upload pasted image"});
     } finally {
-      uploading.value = false
+      uploading.value = false;
     }
   }
 }
@@ -381,30 +381,30 @@ const editorModules = computed(() => {
       bindings: {
         // Handle Enter key to insert a <br> instead of a new paragraph
         linebreak: {
-          key: 'Enter',
+          key: "Enter",
           handler: function (range, _context) {
-            this.quill.insertEmbed(range.index, 'break', true, 'user')
-            this.quill.setSelection(range.index + 1, 'silent')
-            return false // Interrupt default Enter behavior
+            this.quill.insertEmbed(range.index, "break", true, "user");
+            this.quill.setSelection(range.index + 1, "silent");
+            return false; // Interrupt default Enter behavior
           },
         },
         // Also handle Shift+Enter just in case
         shift_linebreak: {
-          key: 'Enter',
+          key: "Enter",
           shiftKey: true,
           handler: function (range, _context) {
-            this.quill.insertEmbed(range.index, 'break', true, 'user')
-            this.quill.setSelection(range.index + 1, 'silent')
-            return false
+            this.quill.insertEmbed(range.index, "break", true, "user");
+            this.quill.setSelection(range.index + 1, "silent");
+            return false;
           },
         },
       },
     },
-  }
-})
+  };
+});
 
 function toggleHtmlMode() {
-  htmlMode.value = !htmlMode.value
+  htmlMode.value = !htmlMode.value;
 }
 
 function onHtmlInput(_event) {
@@ -425,8 +425,8 @@ function onHtmlInput(_event) {
   min-height: 150px;
 }
 
-.ql-editor ol li[data-list='bullet']::before {
-  content: '\2022';
+.ql-editor ol li[data-list="bullet"]::before {
+  content: "\2022";
 }
 
 .qnstl .ql-editor.ql-blank::before {

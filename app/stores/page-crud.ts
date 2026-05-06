@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import { wrapApiCall } from '~/utils/handle-try-catch'
-import { getAdminAxios } from '../utils/adminAxios'
+import { wrapApiCall } from '../utils/handle-try-catch'
+import { getUserAxios } from '../utils/userAxios'
 
 export const usePageCrudStore = defineStore('pageCrud', {
   state: () => ({
@@ -13,8 +13,9 @@ export const usePageCrudStore = defineStore('pageCrud', {
 
   actions: {
     async getPage(slug: string) {
-      const token = useCookie('_admin_token').value
-      const axios = getAdminAxios()
+      const { getTokenFromCookie } = useAuthStore()
+      const token = getTokenFromCookie()
+      const axios = getUserAxios()
 
       const response = await wrapApiCall('getPage', async () => {
         return await axios.get(`/pages/slug/${slug}`, {
@@ -27,8 +28,9 @@ export const usePageCrudStore = defineStore('pageCrud', {
     },
 
     async savePage(page: any) {
-      const token = useCookie('_admin_token').value
-      const axios = getAdminAxios()
+      const { getTokenFromCookie } = useAuthStore()
+      const token = getTokenFromCookie()
+      const axios = getUserAxios()
 
       const response = await wrapApiCall('savePage', async () => {
         return await axios.patch(
@@ -58,9 +60,10 @@ export const usePageCrudStore = defineStore('pageCrud', {
       config?: any
       showSuccessToast: boolean
     }) {
-      const axios = getAdminAxios()
+      const axios = getUserAxios()
       const { handleSuccess } = useGlobalStore()
-      const token = useCookie('_admin_token').value
+      const { getTokenFromCookie } = useAuthStore()
+      const token = getTokenFromCookie()
 
       return wrapApiCall('uploadFile', async () => {
         {

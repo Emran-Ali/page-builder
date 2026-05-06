@@ -1,39 +1,39 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import RTEditor from './RTEditor.vue'
+import {ref, watch} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import RTEditor from "./RTEditor.vue";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const rteProps = ref({})
+const store = usePageBuilderStore();
+const rteProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'rte') {
-      rteProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "rte") {
+      rteProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 const updateRTEProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, rteProps.value)
+    store.updateComponentProps(props.component.id, rteProps.value);
   }
-}
+};
 
 const updateProp = (key, value) => {
-  rteProps.value[key] = value
-  updateRTEProps()
-}
+  rteProps.value[key] = value;
+  updateRTEProps();
+};
 </script>
 
 <template>

@@ -1,24 +1,24 @@
 <script setup>
-import DataTableComponent from '~/components/BuilderComponents/DataTable/DataTableComponent.vue'
-import TableComponent from '~/components/BuilderComponents/Table/TableComponent.vue'
-import AccordionComponent from '../BuilderComponents/Accordion/AccordionComponent.vue'
-import ButtonComponent from '../BuilderComponents/Button/ButtonComponent.vue'
-import CardComponent from '../BuilderComponents/Card/CardComponent.vue'
-import CTAComponent from '../BuilderComponents/CTA/CTAComponent.vue'
-import GridComponent from '../BuilderComponents/Grid/GridComponent.vue'
-import GridBlockComponent from '../BuilderComponents/GridBlock/GridBlockComponent.vue'
-import ImageComponent from '../BuilderComponents/Image/ImageComponent.vue'
-import ListItemComponent from '../BuilderComponents/ListItem/ListItemComponent.vue'
-import MapBlockComponent from '../BuilderComponents/MapBlock/MapBlockComponent.vue'
-import OfflineTeacherListComponent from '../BuilderComponents/OfflineTeacherList/OfflineTeacherListComponent.vue'
-import SearchOfflineTeacherComponent from '../BuilderComponents/SearchOfflineTeacher/SearchOfflineTeacherComponent.vue'
-import TeacherListComponent from '../BuilderComponents/TeacherList/TeacherListComponent.vue'
-import TestimonialComponent from '../BuilderComponents/Testimonial/TestimonialComponent.vue'
-import TextComponent from '../BuilderComponents/Text/TextComponent.vue'
-import TextImageComponent from '../BuilderComponents/TextImage/TextImageComponent.vue'
+import DataTableComponent from "@components/BuilderComponents/DataTable/DataTableComponent.vue";
+import TableComponent from "@components/BuilderComponents/Table/TableComponent.vue";
+import AccordionComponent from "../BuilderComponents/Accordion/AccordionComponent.vue";
+import ButtonComponent from "../BuilderComponents/Button/ButtonComponent.vue";
+import CardComponent from "../BuilderComponents/Card/CardComponent.vue";
+import CTAComponent from "../BuilderComponents/CTA/CTAComponent.vue";
+import GridComponent from "../BuilderComponents/Grid/GridComponent.vue";
+import GridBlockComponent from "../BuilderComponents/GridBlock/GridBlockComponent.vue";
+import ImageComponent from "../BuilderComponents/Image/ImageComponent.vue";
+import ListItemComponent from "../BuilderComponents/ListItem/ListItemComponent.vue";
+import MapBlockComponent from "../BuilderComponents/MapBlock/MapBlockComponent.vue";
+import OfflineTeacherListComponent from "../BuilderComponents/OfflineTeacherList/OfflineTeacherListComponent.vue";
+import SearchOfflineTeacherComponent from "../BuilderComponents/SearchOfflineTeacher/SearchOfflineTeacherComponent.vue";
+import TeacherListComponent from "../BuilderComponents/TeacherList/TeacherListComponent.vue";
+import TestimonialComponent from "../BuilderComponents/Testimonial/TestimonialComponent.vue";
+import TextComponent from "../BuilderComponents/Text/TextComponent.vue";
+import TextImageComponent from "../BuilderComponents/TextImage/TextImageComponent.vue";
 
-import RTEComponent from '../BuilderComponents/RTF/RTEComponent.vue'
-import TeacherFinderBlockComponent from '../BuilderComponents/TeacherFinderBlock/TeacherFinderBlockComponent.vue'
+import RTEComponent from "../BuilderComponents/RTF/RTEComponent.vue";
+import TeacherFinderBlockComponent from "../BuilderComponents/TeacherFinderBlock/TeacherFinderBlockComponent.vue";
 
 defineProps({
   component: {
@@ -29,9 +29,9 @@ defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 
-defineEmits(['update:props'])
+defineEmits(["update:props"]);
 
 const componentMap = {
   table: TableComponent,
@@ -53,7 +53,7 @@ const componentMap = {
   offlineteacherlist: OfflineTeacherListComponent,
   teacherfinderblock: TeacherFinderBlockComponent,
   rte: RTEComponent,
-}
+};
 </script>
 
 <template>

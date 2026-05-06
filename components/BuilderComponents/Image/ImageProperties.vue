@@ -1,194 +1,194 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import Slider from 'primevue/slider'
+import {ref, watch, computed} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import Slider from "primevue/slider";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const imageProps = ref({})
+const store = usePageBuilderStore();
+const imageProps = ref({});
 
 // Unit selection for dimensions
-const widthUnit = ref('px')
-const heightUnit = ref('px')
+const widthUnit = ref("px");
+const heightUnit = ref("px");
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'image') {
-      imageProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "image") {
+      imageProps.value = {...newComponent.props};
       // Initialize units based on existing values
       if (imageProps.value.width) {
-        widthUnit.value = imageProps.value.width.includes('%') ? '%' : 'px'
+        widthUnit.value = imageProps.value.width.includes("%") ? "%" : "px";
       }
       if (imageProps.value.height) {
-        heightUnit.value = imageProps.value.height.includes('%') ? '%' : 'px'
+        heightUnit.value = imageProps.value.height.includes("%") ? "%" : "px";
       }
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Update function with real-time updates
 const updateImageProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, imageProps.value)
+    store.updateComponentProps(props.component.id, imageProps.value);
   }
-}
+};
 
 // Set caption style function
 const setCaptionStyle = (style) => {
-  imageProps.value.captionStyle = style
-  updateImageProps()
-}
+  imageProps.value.captionStyle = style;
+  updateImageProps();
+};
 
 // Set caption text alignment function
 const setCaptionTextAlign = (alignment) => {
-  imageProps.value.captionTextAlign = alignment
-  updateImageProps()
-}
+  imageProps.value.captionTextAlign = alignment;
+  updateImageProps();
+};
 
 // Set image alignment function
 const setImageAlignment = (alignment) => {
-  imageProps.value.alignment = alignment
-  updateImageProps()
-}
+  imageProps.value.alignment = alignment;
+  updateImageProps();
+};
 
 // Alignment options
 const alignmentOptions = [
-  { label: 'Left', value: 'left' },
-  { label: 'Center', value: 'center' },
-  { label: 'Right', value: 'right' },
-]
+  {label: "Left", value: "left"},
+  {label: "Center", value: "center"},
+  {label: "Right", value: "right"},
+];
 
 // Caption text alignment options
 const captionTextAlignOptions = [
-  { label: 'Left', value: 'left' },
-  { label: 'Center', value: 'center' },
-  { label: 'Right', value: 'right' },
-]
+  {label: "Left", value: "left"},
+  {label: "Center", value: "center"},
+  {label: "Right", value: "right"},
+];
 
 // Computed values for sliders with unit support
 const widthValue = computed({
   get: () => {
-    const value = imageProps.value.width || '300px'
-    return parseInt(value.replace(/[px%]/g, '') || 300)
+    const value = imageProps.value.width || "300px";
+    return parseInt(value.replace(/[px%]/g, "") || 300);
   },
   set: (value) => {
-    imageProps.value.width = `${value}${widthUnit.value}`
-    updateImageProps()
+    imageProps.value.width = `${value}${widthUnit.value}`;
+    updateImageProps();
   },
-})
+});
 
 const heightValue = computed({
   get: () => {
-    const value = imageProps.value.height || '200px'
-    return parseInt(value.replace(/[px%]/g, '') || 200)
+    const value = imageProps.value.height || "200px";
+    return parseInt(value.replace(/[px%]/g, "") || 200);
   },
   set: (value) => {
-    imageProps.value.height = `${value}${heightUnit.value}`
-    updateImageProps()
+    imageProps.value.height = `${value}${heightUnit.value}`;
+    updateImageProps();
   },
-})
+});
 
 // Unit change handlers
 const changeWidthUnit = (unit) => {
-  widthUnit.value = unit
-  const currentValue = widthValue.value
-  imageProps.value.width = `${currentValue}${unit}`
-  updateImageProps()
-}
+  widthUnit.value = unit;
+  const currentValue = widthValue.value;
+  imageProps.value.width = `${currentValue}${unit}`;
+  updateImageProps();
+};
 
 const changeHeightUnit = (unit) => {
-  heightUnit.value = unit
-  const currentValue = heightValue.value
-  imageProps.value.height = `${currentValue}${unit}`
-  updateImageProps()
-}
+  heightUnit.value = unit;
+  const currentValue = heightValue.value;
+  imageProps.value.height = `${currentValue}${unit}`;
+  updateImageProps();
+};
 
 const opacityValue = computed({
   get: () => imageProps.value.opacity || 1,
   set: (value) => {
-    imageProps.value.opacity = value
-    updateImageProps()
+    imageProps.value.opacity = value;
+    updateImageProps();
   },
-})
+});
 
 const paddingHorizontalValue = computed({
   get: () =>
-    parseInt(imageProps.value.paddingHorizontal?.replace('px', '') || '0'),
+    parseInt(imageProps.value.paddingHorizontal?.replace("px", "") || "0"),
   set: (value) => {
-    imageProps.value.paddingHorizontal = `${value}px`
-    updateImageProps()
+    imageProps.value.paddingHorizontal = `${value}px`;
+    updateImageProps();
   },
-})
+});
 
 const paddingVerticalValue = computed({
   get: () =>
-    parseInt(imageProps.value.paddingVertical?.replace('px', '') || '0'),
+    parseInt(imageProps.value.paddingVertical?.replace("px", "") || "0"),
   set: (value) => {
-    imageProps.value.paddingVertical = `${value}px`
-    updateImageProps()
+    imageProps.value.paddingVertical = `${value}px`;
+    updateImageProps();
   },
-})
+});
 
 const marginHorizontalValue = computed({
   get: () =>
-    parseInt(imageProps.value.marginHorizontal?.replace('px', '') || '0'),
+    parseInt(imageProps.value.marginHorizontal?.replace("px", "") || "0"),
   set: (value) => {
-    imageProps.value.marginHorizontal = `${value}px`
-    updateImageProps()
+    imageProps.value.marginHorizontal = `${value}px`;
+    updateImageProps();
   },
-})
+});
 
 const marginVerticalValue = computed({
   get: () =>
-    parseInt(imageProps.value.marginVertical?.replace('px', '') || '0'),
+    parseInt(imageProps.value.marginVertical?.replace("px", "") || "0"),
   set: (value) => {
-    imageProps.value.marginVertical = `${value}px`
-    updateImageProps()
+    imageProps.value.marginVertical = `${value}px`;
+    updateImageProps();
   },
-})
+});
 
 const captionFontSizeValue = computed({
   get: () =>
-    parseInt(imageProps.value.captionFontSize?.replace('px', '') || '14'),
+    parseInt(imageProps.value.captionFontSize?.replace("px", "") || "14"),
   set: (value) => {
-    imageProps.value.captionFontSize = `${value}px`
-    updateImageProps()
+    imageProps.value.captionFontSize = `${value}px`;
+    updateImageProps();
   },
-})
+});
 
 const captionPaddingValue = computed({
   get: () =>
-    parseInt(imageProps.value.captionPadding?.replace('px', '') || '16'),
+    parseInt(imageProps.value.captionPadding?.replace("px", "") || "16"),
   set: (value) => {
-    imageProps.value.captionPadding = `${value}px`
-    updateImageProps()
+    imageProps.value.captionPadding = `${value}px`;
+    updateImageProps();
   },
-})
+});
 
 // Handle file upload
 const handleFileUpload = (event) => {
-  const file = event.target.files[0]
+  const file = event.target.files[0];
   if (file) {
     // Create a URL for the uploaded file
-    const fileUrl = URL.createObjectURL(file)
-    imageProps.value.src = fileUrl
-    updateImageProps()
+    const fileUrl = URL.createObjectURL(file);
+    imageProps.value.src = fileUrl;
+    updateImageProps();
   }
-}
+};
 
 // Handle URL input
 const handleUrlInput = () => {
-  updateImageProps()
-}
+  updateImageProps();
+};
 </script>
 
 <template>

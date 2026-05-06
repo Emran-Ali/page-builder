@@ -1,104 +1,104 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import InputText from 'primevue/inputtext'
-import Textarea from 'primevue/textarea'
-import Button from 'primevue/button'
-import Dropdown from 'primevue/dropdown'
+import {ref, watch, computed} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
+const store = usePageBuilderStore();
 
 // Local reactive data
-const localProps = ref({})
+const localProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'textimage') {
-      localProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "textimage") {
+      localProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Button management
 const addButton = () => {
   if (!localProps.value.buttons) {
-    localProps.value.buttons = []
+    localProps.value.buttons = [];
   }
   localProps.value.buttons.push({
-    label: 'New Button',
-    link: '',
-    severity: 'primary',
-    variant: 'filled',
-    target: '_self',
-  })
-  updateProps()
-}
+    label: "New Button",
+    link: "",
+    severity: "primary",
+    variant: "filled",
+    target: "_self",
+  });
+  updateProps();
+};
 
 const removeButton = (index) => {
-  localProps.value.buttons.splice(index, 1)
-  updateProps()
-}
+  localProps.value.buttons.splice(index, 1);
+  updateProps();
+};
 
 const updateButton = (index, field, value) => {
   if (localProps.value.buttons[index]) {
-    localProps.value.buttons[index][field] = value
-    updateProps()
+    localProps.value.buttons[index][field] = value;
+    updateProps();
   }
-}
+};
 
 const severityOptions = [
-  { label: 'Primary', value: 'primary' },
-  { label: 'Secondary', value: 'secondary' },
-]
+  {label: "Primary", value: "primary"},
+  {label: "Secondary", value: "secondary"},
+];
 
 const variantOptions = [
-  { label: 'Filled', value: 'filled' },
-  { label: 'Outlined', value: 'outlined' },
-  { label: 'Text', value: 'text' },
-]
+  {label: "Filled", value: "filled"},
+  {label: "Outlined", value: "outlined"},
+  {label: "Text", value: "text"},
+];
 
 const headingOptions = [
-  { label: 'Heading 1', value: 'h1' },
-  { label: 'Heading 2', value: 'h2' },
-  { label: 'Heading 3', value: 'h3' },
-]
+  {label: "Heading 1", value: "h1"},
+  {label: "Heading 2", value: "h2"},
+  {label: "Heading 3", value: "h3"},
+];
 
 const textAlignOptions = [
-  { label: 'Left', value: 'left' },
-  { label: 'Center', value: 'center' },
-  { label: 'Right', value: 'right' },
-]
+  {label: "Left", value: "left"},
+  {label: "Center", value: "center"},
+  {label: "Right", value: "right"},
+];
 
 // Update props function
 const updateProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, localProps.value)
+    store.updateComponentProps(props.component.id, localProps.value);
   }
-}
+};
 
 // Watchers for immediate updates
 const updateProp = (key, value) => {
-  localProps.value[key] = value
-  updateProps()
-}
+  localProps.value[key] = value;
+  updateProps();
+};
 
 // Media type management
-const activeMediaTab = computed(() => localProps.value.mediaType || 'image')
+const activeMediaTab = computed(() => localProps.value.mediaType || "image");
 
 const updateMediaType = (type) => {
-  localProps.value.mediaType = type
-  updateProps()
-}
+  localProps.value.mediaType = type;
+  updateProps();
+};
 </script>
 
 <template>

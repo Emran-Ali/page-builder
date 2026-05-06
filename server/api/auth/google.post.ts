@@ -1,11 +1,18 @@
 import { google } from 'googleapis';
-import { H3Event, sendRedirect } from 'h3';
 
-export default defineEventHandler(async (event: H3Event) => {
+export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
+  
+  if (!config.public.googleClientId || !config.public.googleCallbackUrl) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Google OAuth credentials not configured',
+    });
+  }
+
   const oauth2Client = new google.auth.OAuth2(
     config.public.googleClientId,
-    config.public.googleClientSecret,
+    config.googleClientSecret,
     config.public.googleCallbackUrl
   );
 
@@ -15,5 +22,5 @@ export default defineEventHandler(async (event: H3Event) => {
     prompt: 'select_account',
   });
 
-  return sendRedirect(event, url, 302);
+  return { url };
 });

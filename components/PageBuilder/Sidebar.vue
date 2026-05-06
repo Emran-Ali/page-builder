@@ -1,46 +1,46 @@
 <script setup>
-import { computed } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import BaseLucide from '../../../components/base/Lucide.vue'
+import {computed} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import BaseLucide from "../../../components/base/Lucide.vue";
 
-const store = usePageBuilderStore()
+const store = usePageBuilderStore();
 
 const categorizedComponents = computed(() => {
-  const categories = {}
+  const categories = {};
 
   store.componentLibrary.forEach((component) => {
-    const category = component.category || 'General'
+    const category = component.category || "General";
     if (!categories[category]) {
-      categories[category] = []
+      categories[category] = [];
     }
-    categories[category].push(component)
-  })
+    categories[category].push(component);
+  });
 
   return Object.entries(categories).map(([name, components]) => ({
     name,
     components,
-  }))
-})
+  }));
+});
 
-const totalComponents = computed(() => store.currentPage.components.length)
+const totalComponents = computed(() => store.currentPage.components.length);
 
 const handleDragStart = (event, component) => {
-  event.dataTransfer.setData('component-type', component.id)
-  event.dataTransfer.effectAllowed = 'copy'
+  event.dataTransfer.setData("component-type", component.id);
+  event.dataTransfer.effectAllowed = "copy";
 
   // Visual feedback
-  event.target.style.opacity = '0.5'
+  event.target.style.opacity = "0.5";
 
   // Store the dragged component type
-  store.draggedComponent = component.id
-  store.draggedComponentFrom = 'sidebar' // <-- set drag source
-}
+  store.draggedComponent = component.id;
+  store.draggedComponentFrom = "sidebar"; // <-- set drag source
+};
 
 const handleDragEnd = (event) => {
-  event.target.style.opacity = '1'
-  store.draggedComponent = null
-  store.draggedComponentFrom = null // <-- clear drag source
-}
+  event.target.style.opacity = "1";
+  store.draggedComponent = null;
+  store.draggedComponentFrom = null; // <-- clear drag source
+};
 </script>
 
 <template>

@@ -1,10 +1,10 @@
 <script setup>
-import Canvas from '../../components/PageBuilder/Canvas.vue'
-import { usePageBuilderStore } from '../../stores/pageBuilder'
+import Canvas from "@components/PageBuilder/Canvas.vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
 
-const { slug } = useRoute().params
+const {slug} = useRoute().params;
 
-const store = usePageBuilderStore()
+const store = usePageBuilderStore();
 
 // Fetch page data from API
 const {
@@ -12,57 +12,56 @@ const {
   pending,
   error,
 } = await useAsyncData(`page-${slug}`, async () => {
-  const { $axios } = useNuxtApp()
+  const {$axios} = useNuxtApp();
 
-  const response = await $axios.get(`/pages/slug/${slug}`)
+  const response = await $axios.get(`/pages/slug/${slug}`);
 
   if (response?.data?.data?.pageJson) {
-    store.loadPage(response?.data?.data?.pageJson)
+    store.loadPage(response?.data?.data?.pageJson);
   }
-  return response?.data?.data
-})
+  return response?.data?.data;
+});
 
 const pageImage = computed(() => {
-  if (!pageData.value?.featuredImage) return ''
-  return getImageVersions(pageData.value.featuredImage).optimized
-})
-
+  if (!pageData.value?.featuredImage) return "";
+  return getImageVersions(pageData.value.featuredImage).optimized;
+});
 
 usePageMeta(() => ({
   title:
     pageData.value?.seoTitle && pageData.value?.seoTitle.trim()
       ? pageData.value.seoTitle.trim()
-      : pageData.value?.title?.trim() || 'Default Title',
+      : pageData.value?.title?.trim() || "Default Title",
   description:
     pageData.value?.seoDescription && pageData.value?.seoDescription.trim()
       ? pageData.value.seoDescription.trim()
-      : pageData.value?.excerpt?.trim() || '',
+      : pageData.value?.excerpt?.trim() || "",
   keywords:
     pageData.value?.seoKeywords && pageData.value?.seoKeywords.trim()
       ? pageData.value.seoKeywords.trim()
-      : '',
+      : "",
   ogImage: pageImage.value || undefined,
   schema: pageData.value?.schema || {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: pageData.value?.seoTitle || pageData.value?.title || '',
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: pageData.value?.seoTitle || pageData.value?.title || "",
     description:
-      pageData.value?.seoDescription || pageData.value?.excerpt || '',
+      pageData.value?.seoDescription || pageData.value?.excerpt || "",
     image: pageImage.value || undefined,
   },
-}))
+}));
 
 const decodeHtmlEntities = (html) => {
-  if (!html) return ''
+  if (!html) return "";
   return html
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/&#x2F;/g, '/')
-}
+    .replace(/&#x2F;/g, "/");
+};
 </script>
 
 <template>
@@ -86,7 +85,7 @@ const decodeHtmlEntities = (html) => {
 
       <!-- Error state - redirect to 404 -->
       <div v-else-if="error">
-        {{ navigateTo('/404') }}
+        {{ navigateTo("/404") }}
       </div>
 
       <!-- Content state -->
@@ -121,7 +120,7 @@ const decodeHtmlEntities = (html) => {
 
       <!-- Not found state - redirect to 404 -->
       <div v-else>
-        {{ navigateTo('/404') }}
+        {{ navigateTo("/404") }}
       </div>
     </BaseContainer>
   </div>

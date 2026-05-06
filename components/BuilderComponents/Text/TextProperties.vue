@@ -1,177 +1,177 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
-import { usePageBuilderStore } from '~/stores/pageBuilder'
-import Slider from 'primevue/slider'
+import {ref, watch, computed} from "vue";
+import {usePageBuilderStore} from "@stores/pageBuilder";
+import Slider from "primevue/slider";
 
 const props = defineProps({
   component: {
     type: Object,
     required: true,
   },
-})
+});
 
-const store = usePageBuilderStore()
-const textProps = ref({})
+const store = usePageBuilderStore();
+const textProps = ref({});
 
 // Watch for component prop changes
 watch(
   () => props.component,
   (newComponent) => {
-    if (newComponent && newComponent.type === 'text') {
-      textProps.value = { ...newComponent.props }
+    if (newComponent && newComponent.type === "text") {
+      textProps.value = {...newComponent.props};
     }
   },
-  { immediate: true, deep: true }
-)
+  {immediate: true, deep: true},
+);
 
 // Update function with real-time updates
 const updateTextProps = () => {
   if (props.component) {
-    store.updateComponentProps(props.component.id, textProps.value)
+    store.updateComponentProps(props.component.id, textProps.value);
   }
-}
+};
 
 // Set text alignment function
 const setTextAlign = (alignment) => {
-  textProps.value.textAlign = alignment
-  updateTextProps()
-}
+  textProps.value.textAlign = alignment;
+  updateTextProps();
+};
 
 // Font weight options
 const fontWeightOptions = [
-  { label: 'Light', value: '300' },
-  { label: 'Normal', value: 'normal' },
-  { label: 'Medium', value: '500' },
-  { label: 'Semi Bold', value: '600' },
-  { label: 'Bold', value: 'bold' },
-  { label: 'Extra Bold', value: '800' },
-  { label: 'XX-Bold', value: '900' },
-]
+  {label: "Light", value: "300"},
+  {label: "Normal", value: "normal"},
+  {label: "Medium", value: "500"},
+  {label: "Semi Bold", value: "600"},
+  {label: "Bold", value: "bold"},
+  {label: "Extra Bold", value: "800"},
+  {label: "XX-Bold", value: "900"},
+];
 
 // Element type options
 const elementTypeOptions = [
-  { label: '🏷️ H1', value: 'h1' },
-  { label: '🏷️ H2', value: 'h2' },
-  { label: '🏷️ H3', value: 'h3' },
-  { label: '🏷️ H4', value: 'h4' },
-  { label: '🏷️ H5', value: 'h5' },
-  { label: '🏷️ H6', value: 'h6' },
-  { label: '📝 Paragraph', value: 'p' },
-  { label: '📄 Span', value: 'span' },
-]
+  {label: "🏷️ H1", value: "h1"},
+  {label: "🏷️ H2", value: "h2"},
+  {label: "🏷️ H3", value: "h3"},
+  {label: "🏷️ H4", value: "h4"},
+  {label: "🏷️ H5", value: "h5"},
+  {label: "🏷️ H6", value: "h6"},
+  {label: "📝 Paragraph", value: "p"},
+  {label: "📄 Span", value: "span"},
+];
 
 // Computed values for sliders - simplified approach
 const fontSizeValue = computed({
-  get: () => parseInt(textProps.value.fontSize?.replace('px', '') || '16'),
+  get: () => parseInt(textProps.value.fontSize?.replace("px", "") || "16"),
   set: (value) => {
-    textProps.value.fontSize = `${value}px`
-    updateTextProps()
+    textProps.value.fontSize = `${value}px`;
+    updateTextProps();
   },
-})
+});
 
 const lineHeightValue = computed({
-  get: () => parseFloat(textProps.value.lineHeight || '1.5'),
+  get: () => parseFloat(textProps.value.lineHeight || "1.5"),
   set: (value) => {
-    textProps.value.lineHeight = value.toString()
-    updateTextProps()
+    textProps.value.lineHeight = value.toString();
+    updateTextProps();
   },
-})
+});
 
 const letterSpacingValue = computed({
-  get: () => parseInt(textProps.value.letterSpacing?.replace('px', '') || '0'),
+  get: () => parseInt(textProps.value.letterSpacing?.replace("px", "") || "0"),
   set: (value) => {
-    textProps.value.letterSpacing = `${value}px`
-    updateTextProps()
+    textProps.value.letterSpacing = `${value}px`;
+    updateTextProps();
   },
-})
+});
 
 const paddingHorizontalValue = computed({
   get: () =>
-    parseInt(textProps.value.paddingHorizontal?.replace('px', '') || '0'),
+    parseInt(textProps.value.paddingHorizontal?.replace("px", "") || "0"),
   set: (value) => {
-    textProps.value.paddingHorizontal = `${value}px`
-    updateTextProps()
+    textProps.value.paddingHorizontal = `${value}px`;
+    updateTextProps();
   },
-})
+});
 
 const paddingVerticalValue = computed({
   get: () =>
-    parseInt(textProps.value.paddingVertical?.replace('px', '') || '0'),
+    parseInt(textProps.value.paddingVertical?.replace("px", "") || "0"),
   set: (value) => {
-    textProps.value.paddingVertical = `${value}px`
-    updateTextProps()
+    textProps.value.paddingVertical = `${value}px`;
+    updateTextProps();
   },
-})
+});
 
 const marginHorizontalValue = computed({
   get: () =>
-    parseInt(textProps.value.marginHorizontal?.replace('px', '') || '0'),
+    parseInt(textProps.value.marginHorizontal?.replace("px", "") || "0"),
   set: (value) => {
-    textProps.value.marginHorizontal = `${value}px`
-    updateTextProps()
+    textProps.value.marginHorizontal = `${value}px`;
+    updateTextProps();
   },
-})
+});
 
 const marginVerticalValue = computed({
-  get: () => parseInt(textProps.value.marginVertical?.replace('px', '') || '0'),
+  get: () => parseInt(textProps.value.marginVertical?.replace("px", "") || "0"),
   set: (value) => {
-    textProps.value.marginVertical = `${value}px`
-    updateTextProps()
+    textProps.value.marginVertical = `${value}px`;
+    updateTextProps();
   },
-})
+});
 
 // Get default heading styles
 const getHeadingDefaults = (elementType) => {
   switch (elementType) {
-    case 'h1':
-      return { fontSize: '32px', fontWeight: 'bold' } // 2rem = 32px
-    case 'h2':
-      return { fontSize: '24px', fontWeight: 'bold' } // 1.5rem = 24px
-    case 'h3':
-      return { fontSize: '20px', fontWeight: 'bold' } // 1.25rem = 20px
-    case 'h4':
-      return { fontSize: '18px', fontWeight: 'bold' } // 1.125rem = 18px
-    case 'h5':
-      return { fontSize: '16px', fontWeight: 'bold' } // 1rem = 16px
-    case 'h6':
-      return { fontSize: '14px', fontWeight: 'bold' } // 0.875rem = 14px
+    case "h1":
+      return {fontSize: "32px", fontWeight: "bold"}; // 2rem = 32px
+    case "h2":
+      return {fontSize: "24px", fontWeight: "bold"}; // 1.5rem = 24px
+    case "h3":
+      return {fontSize: "20px", fontWeight: "bold"}; // 1.25rem = 20px
+    case "h4":
+      return {fontSize: "18px", fontWeight: "bold"}; // 1.125rem = 18px
+    case "h5":
+      return {fontSize: "16px", fontWeight: "bold"}; // 1rem = 16px
+    case "h6":
+      return {fontSize: "14px", fontWeight: "bold"}; // 0.875rem = 14px
     default:
-      return { fontSize: '16px', fontWeight: 'normal' }
+      return {fontSize: "16px", fontWeight: "normal"};
   }
-}
+};
 
 // Check if current element is using heading defaults
 const isUsingHeadingDefaults = () => {
   if (
-    !['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(textProps.value.elementType)
+    !["h1", "h2", "h3", "h4", "h5", "h6"].includes(textProps.value.elementType)
   ) {
-    return false
+    return false;
   }
-  const defaults = getHeadingDefaults(textProps.value.elementType)
+  const defaults = getHeadingDefaults(textProps.value.elementType);
   return (
     textProps.value.fontSize === defaults.fontSize &&
     textProps.value.fontWeight === defaults.fontWeight
-  )
-}
+  );
+};
 
 // Handle element type changes with automatic defaults
 const changeElementType = (elementType) => {
-  textProps.value.elementType = elementType
+  textProps.value.elementType = elementType;
 
   // Always apply defaults when changing to headings
-  const isHeading = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(elementType)
+  const isHeading = ["h1", "h2", "h3", "h4", "h5", "h6"].includes(elementType);
   if (isHeading) {
-    const defaults = getHeadingDefaults(elementType)
-    textProps.value.fontSize = defaults.fontSize
-    textProps.value.fontWeight = defaults.fontWeight
+    const defaults = getHeadingDefaults(elementType);
+    textProps.value.fontSize = defaults.fontSize;
+    textProps.value.fontWeight = defaults.fontWeight;
   } else {
     // Reset to normal for non-headings
-    textProps.value.fontSize = '16px'
-    textProps.value.fontWeight = 'normal'
+    textProps.value.fontSize = "16px";
+    textProps.value.fontWeight = "normal";
   }
 
-  updateTextProps()
-}
+  updateTextProps();
+};
 </script>
 
 <template>
