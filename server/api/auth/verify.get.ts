@@ -1,6 +1,5 @@
 export default defineEventHandler(async (event) => {
-  // Verify if user has a valid token/session
-  // This can be enhanced based on your authentication mechanism
+
 
   const cookie = getCookie(event, "auth_token");
 

@@ -1,6 +1,6 @@
 <script setup>
 import {computed} from "vue";
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 import TableProperties from "../BuilderComponents/Table/TableProperties.vue";
 import DataTableProperties from "../BuilderComponents/DataTable/DataTableProperties.vue";
 import CardProperties from "../BuilderComponents/Card/CardProperties.vue";

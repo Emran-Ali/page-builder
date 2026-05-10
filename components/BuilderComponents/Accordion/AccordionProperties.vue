@@ -4,7 +4,7 @@ import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 
 const props = defineProps({
   component: {

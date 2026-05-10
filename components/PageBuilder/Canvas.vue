@@ -1,5 +1,5 @@
 <script setup>
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 import BaseLucide from "../../../components/base/Lucide.vue";
 import DraggableItem from "./DraggableItem.vue";
 

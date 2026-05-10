@@ -1,6 +1,6 @@
 <script setup>
 import {computed, nextTick, onMounted, onUnmounted, ref} from "vue";
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 
 const pageBuilderStore = usePageBuilderStore();
 

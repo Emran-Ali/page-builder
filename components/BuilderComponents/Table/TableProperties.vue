@@ -1,5 +1,5 @@
 <script setup>
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 
 const props = defineProps({
   component: {

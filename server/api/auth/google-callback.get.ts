@@ -1,4 +1,7 @@
 import { google } from 'googleapis';
+import { getDataSource } from '../../database';
+import { User } from '../../entities/User';
+import { generateAccessToken } from '~/utils/token';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -25,18 +28,44 @@ export default defineEventHandler(async (event) => {
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
     const userInfo = await oauth2.userinfo.get();
 
+    // Save user to database
+    const dataSource = getDataSource();
+    const userRepository = dataSource.getRepository(User);
+
+    const googleId = userInfo.data.id!;
+    const email = userInfo.data.email!;
+    const name = userInfo.data.name!;
+    const avatar = userInfo.data.picture || null;
+
+    let user = await userRepository.findOne({
+      where: { googleId }
+    });
+
+    if (!user) {
+      user = new User();
+      user.googleId = googleId;
+      user.email = email;
+      user.name = name;
+      user.avatar = avatar;
+      await userRepository.save(user);
+    } else {
+      // Update existing user info
+      user.email = email;
+      user.name = name;
+      user.avatar = avatar;
+      await userRepository.save(user);
+    }
+
+    const accessToken = generateAccessToken({ id: user.id, email: user.email, name: user.name });
+
     // Set secure cookie with token
-    setCookie(event, 'auth_token', JSON.stringify(tokens), {
+    setCookie(event, 'auth_token', JSON.stringify(accessToken), {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
-    // Store user info in a separate cookie (can be read by client)
-    setCookie(event, 'user_info', JSON.stringify(userInfo.data), {
-      maxAge: 60 * 60 * 24 * 7,
-    });
 
     return sendRedirect(event, '/', 302);
   } catch (err: any) {

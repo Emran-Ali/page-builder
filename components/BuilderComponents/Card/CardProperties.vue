@@ -1,6 +1,6 @@
 <script setup>
 import {ref, watch} from "vue";
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 
 const props = defineProps({
   component: {

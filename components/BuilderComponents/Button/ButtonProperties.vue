@@ -1,5 +1,5 @@
 <script setup>
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 import Slider from "primevue/slider";
 
 const props = defineProps({

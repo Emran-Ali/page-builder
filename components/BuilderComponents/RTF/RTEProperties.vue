@@ -1,6 +1,6 @@
 <script setup>
 import {ref, watch} from "vue";
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 import RTEditor from "./RTEditor.vue";
 
 const props = defineProps({

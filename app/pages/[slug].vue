@@ -1,6 +1,6 @@
 <script setup>
 import Canvas from "@components/PageBuilder/Canvas.vue";
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 
 const {slug} = useRoute().params;
 

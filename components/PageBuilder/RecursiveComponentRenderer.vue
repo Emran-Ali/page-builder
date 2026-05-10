@@ -1,5 +1,5 @@
 <script setup>
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 import TableComponent from "@components/BuilderComponents/Table/TableComponent.vue";
 import CardComponent from "@components/BuilderComponents/Card/CardComponent.vue";
 import GridComponent from "@components/BuilderComponents/Grid/GridComponent.vue";

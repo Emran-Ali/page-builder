@@ -1,6 +1,6 @@
 <script setup>
 import {computed} from "vue";
-import {usePageBuilderStore} from "@stores/pageBuilder";
+import {usePageBuilderStore} from "~/stores/pageBuilder";
 import BaseLucide from "../../../components/base/Lucide.vue";
 
 const store = usePageBuilderStore();
