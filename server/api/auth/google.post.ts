@@ -1,26 +1,28 @@
-import { google } from 'googleapis';
+import { google } from "googleapis";
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
-  
-  if (!config.public.googleClientId || !config.public.googleCallbackUrl) {
+  console.log("api call ");
+
+  if (!config.googleClientId || !config.googleCallbackUrl) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Google OAuth credentials not configured',
+      statusMessage: "Google OAuth credentials not configured",
     });
   }
 
   const oauth2Client = new google.auth.OAuth2(
-    config.public.googleClientId,
+    config.googleClientId,
     config.googleClientSecret,
-    config.public.googleCallbackUrl
+    config.googleCallbackUrl,
   );
 
   const url = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: ['profile', 'email'],
-    prompt: 'select_account',
+    access_type: "offline",
+    scope: ["profile", "email"],
+    prompt: "select_account",
   });
+  console.log(url, "this is url");
 
   return { url };
 });

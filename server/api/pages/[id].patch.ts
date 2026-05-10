@@ -1,15 +1,15 @@
-import { getDataSource } from '../../database';
-import { Page } from '../../entities/Page';
+import { getDataSource } from '../../database/data-source';
+import { PageEntity, type Page } from '../../database/entities/Page';
 
 export default defineEventHandler(async (event) => {
   try {
     const id = getRouterParam(event, 'id');
     const body = await readBody(event);
     const dataSource = getDataSource();
-    const pageRepository = dataSource.getRepository(Page);
+    const pageRepository = dataSource.getRepository<Page>(PageEntity);
 
     const page = await pageRepository.findOne({ where: { id } });
-    
+
     if (!page) {
       throw createError({
         statusCode: 404,

@@ -1,6 +1,22 @@
-export default defineEventHandler(async (event) => {
-  // Clear any server-side sessions/cookies here if needed
-  // For now, the client will handle clearing tokens
+import { authenticateUser } from "../../utils/auth";
 
-  return {success: true, message: "Logged out successfully"};
+export default defineEventHandler(async (event) => {
+  try {
+    const user = await authenticateUser(event);
+    return {
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar,
+        isActive: user.isActive,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      user: null,
+    };
+  }
 });

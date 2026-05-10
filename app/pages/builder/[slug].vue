@@ -14,7 +14,6 @@ useTheme();
 definePageMeta({
   title: "Droptik",
   layout: "false",
-  middleware: ["admin"],
 });
 
 const {slug} = useRoute().params;

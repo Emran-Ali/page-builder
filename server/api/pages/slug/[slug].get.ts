@@ -1,17 +1,16 @@
-import { getDataSource } from '../../../database';
-import { Page } from '../../../entities/Page';
+import { getDataSource } from '../../../database/data-source';
+import { PageEntity, type Page } from '../../../database/entities/Page';
 
 export default defineEventHandler(async (event) => {
   try {
     const slug = getRouterParam(event, 'slug');
     const dataSource = getDataSource();
-    const pageRepository = dataSource.getRepository(Page);
+    const pageRepository = dataSource.getRepository<Page>(PageEntity);
 
     const page = await pageRepository.findOne({
-      where: { 
+      where: {
         slug,
         isPublished: true,
-        isActive: true 
       },
       relations: ['author']
     });

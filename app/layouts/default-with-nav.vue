@@ -13,7 +13,7 @@
           </div>
           <div class="flex items-center gap-4">
             <span v-if="auth.user?.name" class="text-gray-700">{{ auth.user.name }}</span>
-            <img v-if="auth.user?.picture" :src="auth.user.picture" :alt="auth.user.name" class="w-10 h-10 rounded-full" />
+            <img v-if="auth.user?.avatar" :src="auth.user.avatar" :alt="auth.user.name" class="w-10 h-10 rounded-full" />
             <button
               @click="handleLogout"
               class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
@@ -33,10 +33,6 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  middleware: 'auth',
-});
-
 const auth = useAuthStore();
 
 const handleLogout = async () => {

@@ -1,16 +1,16 @@
-import { getDataSource } from '../../database';
-import { Page } from '../../entities/Page';
+import { getDataSource } from '../../database/data-source';
+import { PageEntity, type Page } from '../../database/entities/Page';
 
 export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event);
     const dataSource = getDataSource();
-    const pageRepository = dataSource.getRepository(Page);
+    const pageRepository = dataSource.getRepository<Page>(PageEntity);
 
     const { page = 1, limit = 10, authorId, isPublished } = query;
-    
+
     const skip = (Number(page) - 1) * Number(limit);
-    
+
     const where: any = {};
     if (authorId) where.authorId = authorId;
     if (isPublished !== undefined) where.isPublished = isPublished === 'true';

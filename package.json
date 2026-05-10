@@ -7,10 +7,15 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "migration:generate": "npx tsx node_modules/typeorm/cli.js migration:generate -d server/database/cli-data-source.ts",
+    "migration:run": "npx tsx node_modules/typeorm/cli.js migration:run -d server/database/cli-data-source.ts",
+    "migration:revert": "npx tsx node_modules/typeorm/cli.js migration:revert -d server/database/cli-data-source.ts",
+    "migration:show": "npx tsx node_modules/typeorm/cli.js migration:show -d server/database/cli-data-source.ts"
   },
   "dependencies": {
     "@primevue/nuxt-module": "^4.5.5",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.20.0",
     "axios": "^1.16.0",
     "class-transformer": "^0.5.1",
@@ -32,6 +37,8 @@
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.11.2",
     "@types/node": "^25.6.0",
-    "@vueuse/nuxt": "^13.5.0"
+    "@vueuse/nuxt": "^13.5.0",
+    "dotenv": "^17.4.2",
+    "tsx": "^4.21.0"
   }
 }

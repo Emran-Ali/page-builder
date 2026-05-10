@@ -1,4 +1,4 @@
-import { initializeDatabase } from '../database';
+import { initializeDatabase } from '../database/data-source';
 
 export default defineNitroPlugin(async () => {
   try {

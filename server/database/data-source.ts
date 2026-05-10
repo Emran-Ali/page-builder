@@ -1,19 +1,18 @@
 import { DataSource } from 'typeorm';
-import { User } from './entities/User';
-import { Page } from './entities/Page';
+import { UserEntity } from './entities/User';
+import { PageEntity } from './entities/Page';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DATABASE_HOST || 'localhost',
   port: parseInt(process.env.DATABASE_PORT || '5432'),
   username: process.env.DATABASE_USERNAME || 'postgres',
-  password: process.env.DATABASE_PASSWORD || 'password',
+  password: process.env.DATABASE_PASSWORD || '1234',
   database: process.env.DATABASE_NAME || 'pagebuilder',
   synchronize: process.env.NODE_ENV !== 'production',
   logging: process.env.NODE_ENV === 'development',
-  entities: [User, Page],
-  migrations: ['server/migrations/*.ts'],
-  subscribers: ['server/subscribers/*.ts'],
+  entities: [UserEntity, PageEntity],
+  migrations: ['server/database/migrations/*.{ts,js}'],
 });
 
 let dataSource: DataSource | null = null;
