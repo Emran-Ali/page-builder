@@ -3,6 +3,8 @@ import { PageEntity, type Page } from '../../database/entities/Page';
 
 export default defineEventHandler(async (event) => {
   try {
+    const user = await authenticateUser(event);
+
     const query = getQuery(event);
     const dataSource = getDataSource();
     const pageRepository = dataSource.getRepository<Page>(PageEntity);
@@ -12,7 +14,7 @@ export default defineEventHandler(async (event) => {
     const skip = (Number(page) - 1) * Number(limit);
 
     const where: any = {};
-    if (authorId) where.authorId = authorId;
+    where.authorId = user.id;
     if (isPublished !== undefined) where.isPublished = isPublished === 'true';
 
     const [pages, total] = await pageRepository.findAndCount({

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
     <!-- Navigation -->
     <nav class="bg-white shadow-md">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,12 +13,13 @@
           </div>
           <div class="flex items-center gap-4">
             <span v-if="auth.user?.name" class="text-gray-700">{{ auth.user.name }}</span>
-            <img v-if="auth.user?.avatar" :src="auth.user.avatar" :alt="auth.user.name" class="w-10 h-10 rounded-full" />
+            <img v-if="auth.user?.avatar" :src="auth.user.avatar" :alt="auth.user.name" class="w-12 h-12 rounded-full" />
             <button
               @click="handleLogout"
-              class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+              class="hover:text-red-600 font-semibold text-center h-12 w-12 rounded-full border border-gray-300 hover:border-red-100 hover:bg-red-50"
             >
-              Logout
+              <i class="pi pi-sign-out text-xl"></i>
+    
             </button>
           </div>
         </div>

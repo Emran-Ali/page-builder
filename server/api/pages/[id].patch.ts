@@ -1,14 +1,18 @@
 import { getDataSource } from '../../database/data-source';
 import { PageEntity, type Page } from '../../database/entities/Page';
+import { authenticateUser } from '../../utils/auth';
 
 export default defineEventHandler(async (event) => {
   try {
+    
+    const user = await authenticateUser(event);
+
     const id = getRouterParam(event, 'id');
     const body = await readBody(event);
     const dataSource = getDataSource();
     const pageRepository = dataSource.getRepository<Page>(PageEntity);
 
-    const page = await pageRepository.findOne({ where: { id } });
+    const page = await pageRepository.findOne({ where: { id, authorId: user.id } });
 
     if (!page) {
       throw createError({
