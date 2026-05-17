@@ -64,5 +64,6 @@ onMounted(() => {
 
 const loginWithGoogle = async () => {
   await auth.loginWithGoogle();
+  navigateTo("/pages");
 };
 </script>
